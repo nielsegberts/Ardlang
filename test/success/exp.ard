@@ -1,0 +1,11 @@
+pin configuration:
+	output pin1 44
+
+repeat:
+	var val1 = 2
+	var iamnotused = 4
+	var val2 = val1 + val1
+	var val3 = val1 * val1
+	val3 = val2 / val3
+	val3 = (1+2)+(3+4)
+	val3 = 5/4

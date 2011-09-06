@@ -1,0 +1,333 @@
+module check
+
+imports
+  libstratego-lib
+  include/Ardlang
+  lib/editor-common.generated
+  signatures
+  types
+  namespaces
+  namespacelib
+  project
+  analysis/typeanalysis
+
+rules // Constraint warnings & notes
+	
+	// Check for unreferred pins
+	constraint-note: 
+		Configuration(mode,e@PinName(name),number) -> (e, $[Pin "[name]" is never used])
+		where not (
+			<is-referred(|Pins())>name
+		)
+
+	// Check for duplicate pin number declarations
+	constraint-warning:
+		Configuration(mode,PinName(name),e@number) -> (e, $[Pin number "[number]" has multiple names])
+		where (
+			// NOT WORKING YET FOR A0-A5??
+			<gt>(<length><get-declarations(|PinNumbers())>number,1) 
+			// <debug><project-all-declarations(project-pinnr|Pins())>
+		)
+
+  // Check for duplicate state values
+  	constraint-warning: AliasState(StateName(alias,state),e@PinValueList(pinvalues))  -> (e, $[Another state has the exact same values])
+  		where 
+  		 	pinvalues-list := <get-all-declarations(|PinValues(alias))>;
+  			//<debug>pinvalues-list;
+  			<remove-all(?pinvalues)>pinvalues-list => pinvalues-list-unique;
+  			<gt>(<subt>(<length>pinvalues-list,<length>pinvalues-list-unique),1)
+  				
+  	
+  	  				
+  					
+	// Check for unused alias declarations
+	constraint-note: 
+		e@AliasName(alias) -> (e, $[Alias "[alias]" is never used])
+		where not (
+			<is-referred(|Aliases())>alias
+		)
+    
+    // Check for unused state declarations in an alias
+    constraint-note: 
+    	AliasState (e@StateName(alias,state), PinValueList(pinvaluelist)) -> (e, $[State "[state]" is never used])
+    	where not (
+    		<is-referred(|States(alias))>state
+    	)
+
+  	// Only one state in an alias is a bit useless
+  	constraint-note: Alias(e@AliasName(alias),_,states) -> (e, $[Useless code: alias "[alias]" has only one state])
+  		where 
+  			<eq>(<length>states,1)
+  			
+   	// Check for unreferred functions
+    constraint-note: 
+    	e@FuncDecl(name, params,stats) -> (name, $[Function "[name]" is never used])
+    	where not (
+    		<is-referred(|Functions())>name
+    	)
+    	
+    // Check for unreferred vars
+    constraint-warning: 
+    	e@VarDecl(name, _) -> (name, $[Var "[name]" is never used])
+    	where not (
+    		<is-referred(|Vars())>name
+		)
+		
+    // Check for unreferred vars
+    constraint-warning: 
+    	ParamDecl(e@name) -> (name, $[Parameter "[name]" is never used])
+    	where not (
+    		<is-referred(|Vars())>name
+		)
+		
+rules // constraint errors
+
+	// Check for duplicate externals
+    constraint-error: 
+    	External(e@name) -> (name, $[External function "[name]" is already declared])
+    	where 
+    		<get-declarations(|Functions())>name => funcdecls;
+    		<gt>(<length>funcdecls,1)
+    		
+    // Check for wrong externals
+    constraint-error: 
+    	External(e@name) -> (name, $[Bad external function name "[name]"])
+    	where 
+    		<elem>(name,["set","get","wait","read","event"])
+
+	// Check for duplicate events
+    constraint-error: 
+    	e@Event(name, _) -> (name, $[Event "[name]" already exists])
+    	where 
+    		<get-declarations(|Events())>name => eventdecls;
+    		<gt>(<length>eventdecls,1)
+
+	// Check for duplicate vars
+    constraint-error: 
+    	e@VarDecl(name, _) -> (name, $[Var "[name]" already exists])
+    	where 
+    		<get-declarations(|Vars())>name => vardecls;
+    		<gt>(<length>vardecls,1)
+	
+	
+	 // Set function can only set output pins, not inputs!	
+  	 // When a VarRef is given instead of a PinRef, it can unfortunately not be checked
+    constraint-error:
+    	e@FuncCall("set", [PinRef(n)|_]) -> (e, $[Set function can not set pin "[n]" since this is declared as input])
+    	where
+    		<get-pin>n => pin-dec;
+    		<project-pinmode> pin-dec => mode;
+    		<eq>("input",mode)
+    		
+    constraint-error:
+    	e@PinRef(name) -> (e, $[Only references to output pins can be used in an alias declaration])
+    	where
+    		<is-declared(|PinrefsInAlias())>name;
+    		<project-declaration(project-pinmode|Pins())>name => pinmode;
+    		<eq>(pinmode,"input")
+    	
+	constraint-error:
+    	e@PinRef(name) -> (e, $[The pin "[name]" does not exists])
+    	where
+    		not (
+    			<is-declared(|Pins())>name
+    		)
+    
+      constraint-error:
+    	e@FuncCall("read", [PinRef(n)]) -> (e, $[Read function can not read the value of pin "[n]" since this is declared as output])
+    	where
+    		<get-pin>n => pin-dec;
+    		<project-pinmode> pin-dec => mode;
+    		<eq>("output",mode)
+    		
+     constraint-error:
+    	e@FuncCall("get", [PinRef(n)]) -> (e, $[Get function only 'regets' a previously setted value. Use the read function to read from input pins])
+    	where
+    		<get-pin>n => pin-dec;
+    		<project-pinmode> pin-dec => mode;
+    		<eq>("input",mode)
+
+
+	 // Check for references to undefined aliases
+	constraint-error:
+    	e@Assignment(PinRef(n),_) -> (e, "Pins cannot be assigned a value - use 'set [pin] [value]'")
+    	
+
+    // Check for references to undefined aliases
+	constraint-error:
+    	e@AliasStateRef(AliasRef(alias),state) -> (e, $[Alias "[alias]" is not declared])
+    	where not ( 
+    		<is-declared(|Aliases())> alias 
+    	)
+    
+    // Check for references to undefined states	
+    constraint-error:
+    	AliasStateRef(AliasRef(alias), e@state) -> (e, $[Alias "[alias]" does not have a state "[state]"])
+    	where (
+    		<is-declared(|Aliases())> alias;
+    		not (<is-declared(|States(alias))> state)
+    	)
+
+    // Check for duplicate pin name declarations
+    constraint-error:
+    	Configuration(mode,e@PinName(name),number) -> (e, $[Pin name "[name]" is declared multiple times])
+    	where 
+    		<gt>(<length><project-declarations(project-pinnr|Pins())>name,1) 
+
+    // Check for duplicated parameter names
+    constraint-error:
+    	ParamDecl(e@name) -> (e, $[Parameter "[name]" is not unique])
+    	where 
+    		<gt>(<length><project-declarations(project-varname|Vars())>name,1) 
+
+ 	// Check for duplicate state declarations in same alias
+ 	constraint-error: 
+ 		e@StateName (alias, state) -> (e, $[State "[state]" is declared multiple times within this alias])
+  		where
+    		<gt>(<length><get-declarations(|States(alias))>state,1);
+    		<get-declarations(|Aliases())>alias => alias-decs;
+  			not (<gt>(<length>alias-decs,1))
+ 
+  
+  	// Check for duplicate alias declarations
+  	constraint-error: Alias(e@AliasName(alias),pinrefs,_) -> (e, $[Alias "[alias]" is declared multiple times])
+  		where 
+  			<get-declarations(|Aliases())>alias => alias-decs;
+  			<gt>(<length>alias-decs,1)
+ 
+  	// Are the number of pinrefs in a state declaration the same as the number of values for those pins?
+ 	constraint-error: 
+ 		AliasState (StateName(alias,state), e@PinValueList(pinvaluelist)) -> (e, $[There should be [count-pinrefs] values here])
+  		where 
+  			<get-alias> alias => alias-dec;
+  			<length><project-pinrefs>alias-dec => count-pinrefs;
+  			<length>pinvaluelist => count-pinstates;
+    		not(<eq>(count-pinrefs,count-pinstates))
+
+    // Given parameter count should match the expected count		
+    constraint-error:
+    	FuncCall(n,e@p) -> (e, $[Function "[n]" expects [c] parameters, but [g] parameters given])
+    	where
+    		<length> e => g;
+    		<get-function> n => function-dec;
+    		<project-func-params> function-dec => params-dec;
+    		<length> params-dec => c;
+    		not (
+    			<eq> (c,g)
+    		)
+     // Given parameter count should match the expected count		
+    constraint-error:	
+    	FuncCall("set",e@p) -> (e, $[The "set" function expects 2 parameters (a pin and a value)])
+    	where
+    		<length> e => g;
+    		not (
+    			<eq> (2,g)
+    		)
+    		
+    		
+    		
+    constraint-error:	
+    	e@FuncCall("set",[pin|[Int(i)]]) -> (e, $[The "set" function expects the second paramter to be 'high' or 'low')])
+    	where
+    		 not (<elem>(i,["0","1"]))
+    		
+    		
+    		
+    constraint-error:	
+    	e@FuncCallNoArgs(n) -> (e, $[Function "[n]" expects no parameters])
+    	where
+    		<get-function> n => function-dec;
+    		<project-func-params> function-dec => params-dec;
+    		<length> params-dec => c;
+    		not (
+    			<eq> (0,c)
+    		)
+    		
+     // Given parameter count should match the expected count	
+    constraint-error:	
+    	FuncCall("wait",e@p) -> (e, $[The "wait" function expects a value plus time unit with no spaces in between])
+    	where
+    		<length> e => g;
+    		not (
+    			<eq> (1,g)
+    		)
+    
+     // Given parameter count should match the expected count	
+    constraint-error:	
+    	FuncCall("read",e@p) -> (e, $[The "read" function expects one parameter])
+    	where
+    		<length> e => g;
+    		not (
+    			<eq> (1,g)
+    		)
+    		
+    // FuncCallNoArgs (n) can be a functioncall or a pinref, but neither of them exist so raise an error
+    constraint-error:
+    	e@FuncCallNoArgs (n) ->  (e, $[Function, variable or pin "[n]" does not exist])
+    	where
+    		not (
+    			<is-declared(|Functions())>n
+    		)
+    		
+    // Function does not exists
+    constraint-error:
+    	e@FuncCall (n,a) ->  (e, $[Function "[n]" does not exist])
+    	where
+    		not (
+    			<elem>(n,["set","get","wait","read","event"])
+    		);
+    		not (
+    			<is-declared(|Functions())>n
+    		)
+    		
+      // Var does not exists
+    constraint-error:
+    	e@VarRef (n) ->  (e, $[Variable "[n]" does not exist])
+    	where
+    		not (
+    			<is-declared(|Vars())>n
+    		)
+    
+    // "output" or "input" as function name
+    constraint-error:
+    	FuncDecl(e@name, _, _) ->  (e, $[Cannot use "[name]" as function name])		
+  		where <eq> (name, "output") + <eq> (name, "input")
+  		
+  	// 
+  	// Unreachable code checks
+  	// 
+  	
+    constraint-warning:
+    	IfElse(condition,s1,e@s2) -> (e, $[Unreachable code])
+    	where (
+    		<evals-as-true>condition
+    	)
+    	
+    constraint-warning:
+    	If(condition,e@s1) -> (e, $[Unreachable code])
+    	where (
+    		<evals-as-false>condition
+    	)
+    	
+     constraint-warning:
+    	IfElse(condition,e@s1,s2) -> (e, $[Unreachable code])
+    	where (
+    		<evals-as-false>condition
+    	)
+    	
+    constraint-warning:
+    	While(condition,e@s) -> (e, $[Unreachable code])
+    	where (
+    		<evals-as-false>condition
+    	)
+    	
+    //
+    // Ambiguous function call
+    //
+    constraint-error:
+    	e@ambParams() -> (e, $[Please use brackets around the parameters here!])
+  
+    
+    
+    
+   

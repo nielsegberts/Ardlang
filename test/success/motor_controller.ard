@@ -1,0 +1,30 @@
+pin configuration:
+	output motor1pin1X 44 
+	output motor1pin2X 41
+	output motor1pin3X 45
+	output motor1pin4X 46
+	output motor2pin1X 47
+	output motor2pin2X 48
+	output motor2pin3X 49
+	output motor2pin4X 50
+             
+          
+        
+aliases:
+	
+	alias motor1 (motor1pin1X motor1pin2X motor1pin3X motor1pin4X):
+		state turnleft (high low high low)
+		state turnright (low high low high)
+		state off (low low low low)
+		
+	alias motor2 (motor2pin1X motor2pin2X motor2pin3X motor2pin4X):
+		state turnleft (high low high low)
+		state turnright (low high low high)
+		state off (low low low low) 
+
+do-once:
+	switch motor1 off
+	switch motor2 turnright
+	var ditiseenvar = 10%
+	set motor1pin1X high
+	set ditiseenvar high

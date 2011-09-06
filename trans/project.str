@@ -1,0 +1,66 @@
+module project
+
+imports 
+	include/Ardlang
+	namespaces
+	namespacelib
+	signatures
+	types
+	
+rules
+	project-pinnr: Configuration(mode,name,number) -> number
+	project-pinmode: Configuration(Mode(pinmode),_,_) -> pinmode
+	project-pinname: Configuration(mode,name,number) -> name
+	project-pinname: PinRef(name) -> name
+	project-pinname: PinName(name) -> name
+	project-pinrefs: Alias(_,pinrefs,_) -> pinrefs
+	project-pinvalues: AliasState(_,PinValueList(pvl)) -> pvl
+	project-pinvalue-value: PinValue(v) -> v
+	
+	project-varname: VarDecl(name,val) -> name
+	project-varname: ParamDecl(name) -> name
+	project-varname: For(index, _, _, _, _) -> index
+	project-varinitval: VarDecl(name,Int(val)) -> val	// Should be made more generic for other value types
+	
+	get-alias: alias -> <get-declaration(|Aliases())> alias
+	get-state: (alias,state) -> <get-declaration(|States(alias))> state
+	get-states: alias -> <get-all-declarations(|States(alias))>
+	get-state-pinvalues: (alias,state) -> <get-declaration(|PinValues(alias))> state
+	get-function: function -> <get-declaration(|Functions())> function
+	get-pin: pin -> <get-declaration(|Pins())> pin
+	get-var: var -> <get-declaration(|Vars())> var
+	
+	get-pinnr: PinRef(name) -> <project-pinname>pin-dec
+		where
+			<get-declaration(|Pins())>name => pin-dec
+
+	project-statename:
+		AliasState(name, _) -> name	
+	project-statename2:
+		AliasState(StateName(_, name), _) -> name	
+	project-aliasname:
+		Alias(name, _, _) -> name
+	project-aliasname2:
+		Alias(AliasName(name), _, _) -> name
+	
+	project-func-name: External(n) -> n	
+	project-func-name: FuncDecl(n,_,_) -> n
+	project-func-name: FuncCall(n,_) -> n
+	project-func-name: FuncCallNoArgs(n) -> n
+	project-func-params: FuncDecl(_,p,_) -> p
+	project-func-params: FuncCall(_,p) -> p
+	
+	   	
+	
+	evals-as-true: Bool("true") -> 1
+    evals-as-true: Int("1") -> 1
+  
+    	
+    evals-as-false: Bool("false") -> 1
+    evals-as-false: Int("0") -> 1
+	
+	
+	pp: Bool() -> "Boolean"
+	pp: Int() -> "Integer"
+	
+		

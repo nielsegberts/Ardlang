@@ -1,0 +1,16 @@
+pin configuration:
+	output ledpin 13
+
+event "aan":
+	set ledpin high
+
+event "uit":
+	set ledpin low
+	
+event "knipper":
+	for teller from 1 to 5:
+		wait 100ms
+		set ledpin high
+		wait 100ms
+		set ledpin low
+

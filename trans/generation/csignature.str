@@ -1,0 +1,7 @@
+module generation/csignature
+
+signature constructors
+
+CProgram: includes * functions 						 	-> CInclude
+CInclude: file 											-> CInclude
+CFunc: type * name * parameters * statments * return 	-> CFunc 

@@ -1,0 +1,51 @@
+module editor/complete
+
+imports
+	include/Ardlang
+	lib/editor-common.generated
+	signatures
+	ardlang
+	namespaces
+	namespacelib
+	project
+	
+rules 
+	
+	editor-complete:
+		(node, position, ast, path, project-path) -> proposals
+    	where
+			editor-init ;
+			<analyse> ast => ast';
+			<collect-one(propose-analysed)> ast' => proposals
+	
+	propose-analysed = ?FuncCallNoArgs(COMPLETION(name)); ![<pin-proposals> ,<var-proposals>, <function-proposals> name, <alias-proposals> name, <state-proposals> name ] ; concat
+	
+	pin-proposals = get-proposals(project-pinname|Pins())
+	
+	var-proposals = get-proposals(project-varname|Vars())
+	
+	function-proposals:
+		completion -> result
+		where (
+			get-all-declarations(|Functions()) => funcDecls;
+			<map(project-func-name)> funcDecls => funcNames;
+			<filter(string-starts-with(|completion))> funcNames => result
+		)
+		
+	alias-proposals:
+		completion -> result
+		where (
+			get-all-declarations(|Aliases()) => aliasDecls;
+			<map(project-aliasname2)> aliasDecls => aliasNames;
+			<filter(string-starts-with(|completion))> aliasNames => result
+		)
+	
+	state-proposals:
+		completion -> result
+		where (
+			get-all-declarations(|Aliases()) => aliasDecls;
+			<map(project-aliasname2)> aliasDecls => aliasNames;
+			<flatten-list> <map(get-states)> aliasNames => stateDecls;
+			<map(project-statename2)> stateDecls => stateNames;
+			<filter(string-starts-with(|completion))> stateNames => result
+		)

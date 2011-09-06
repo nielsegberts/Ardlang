@@ -1,0 +1,17 @@
+pin configuration:
+	output pin1 44
+
+repeat:
+	var x = 0 
+	if (x<4):
+		x=4
+	else:
+		x=5
+		
+	
+	
+	while(x<0)
+		x=6
+		
+	
+	

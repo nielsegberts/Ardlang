@@ -1,0 +1,18 @@
+pin configuration:
+
+do-once:
+	for teller1 from 1 to 5:
+		print "Hallo! Voor de " ++ teller1 ++ "de keer!"
+		wait 500ms
+		
+	for teller2 from 5 to 2:
+		print "Ik tel naar beneden tot 2: " ++ teller2
+		wait 500ms
+		
+	for teller3 from 1 to 10 step 2:
+		print "Ik tel van 1 naar 10 in stappen van 2: " ++ teller3
+		wait 500ms
+
+	for teller4 from 10 to 1 step -2:
+		print "Nu tel ik van 10 naar 1 in stappen van -2: " ++ teller4
+		wait 500ms

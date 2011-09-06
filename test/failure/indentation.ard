@@ -1,0 +1,41 @@
+pin configuration:
+	output pin1 1
+	output pin2 2
+	output pin3 3	/* Not used */
+	output pin4 4	/* Not used */
+	output pin5 5
+	output pin6 6
+	output pin7 7	/* Not used */
+
+repeat:
+	set pin1 high
+	set pin1 high
+set pin1 high				/* Wrong indentation */
+	set pin1 high
+	set pin1 high
+	set pin1 high
+		set pin1 high		/* Wrong indentation */
+			set pin1 high	/* Wrong indentation */
+			
+	if true:
+		set pin1 high
+	else:
+		set pin1 high
+		if true:
+			set pin1 high
+			set pin1 high
+					set pin1 high	/* Wrong indentation */
+			set pin1 high
+		else:
+			set pin1 high
+			set pin1 high
+
+	while true:
+		set pin1 high
+		set pin5 high
+								set pin2 high	/* Wrong indentation */
+		set pin1 high
+		set pin6 high
+	set pin1 high				
+		set pin1 high			/* Wrong indentation on THIS line, so NOT the previous! */
+		

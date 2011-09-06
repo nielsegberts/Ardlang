@@ -1,0 +1,9 @@
+pin configuration:
+	output pin1 44
+	input pin2 45
+
+repeat:
+	var val = read pin2
+	val = 1
+	var x = true && false
+	

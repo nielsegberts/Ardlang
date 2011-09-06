@@ -1,0 +1,11 @@
+pin configuration:
+	output pin1 34   /* Warning, not used */
+        
+do-once:
+	var x = 5
+	set pin1 high
+	pin1 = 45		/* Pinref cannot  be assigned a value this way */
+	set pin1 low
+	x = 6			/* Varrefs work fine */
+	
+	

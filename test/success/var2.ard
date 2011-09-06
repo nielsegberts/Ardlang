@@ -1,0 +1,5 @@
+pin configuration:
+
+repeat:
+	var bla = 40
+	set bla high

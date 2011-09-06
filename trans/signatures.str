@@ -1,0 +1,34 @@
+module signatures
+
+imports
+  types
+
+signature constructors
+
+Program: Pinconfigurations *  Aliases * Globals * Externals * Code -> Program
+Pinconfigurations: Configurations -> Pinconfigurations
+Globals: Globals -> Globals
+Global: Globals -> Global
+External: name -> External
+Aliases: AliasList -> Aliases
+Alias: Name * Pinlist * Statelist -> Alias
+AliasState: Id * Pinvaluelist -> Aliasstate
+StateName: Id * Id -> StateName
+Configuration: type * pin * number -> Configuration
+Repeat: Statements -> Repeat
+DoOnce: Statements -> DoOnce
+WrongIndent: WrongIndent
+If: Exp * Statements -> If
+Else: Statements -> Else
+IfElse: Exp * Statements * Statements -> IfElse
+While: Exp * Statements -> While
+For: Id * Exp * Exp * Exp * Statements -> For
+VarRef: Id -> VarRef
+Repeat: name * statements -> Repeat
+DoOnce: name * statements -> Repeat
+Event: name * statements -> Event
+FuncDecl: name * args * statements -> FuncDecl
+AnalogRead: input -> AnalogRead
+VarDecl: Id * Id -> VarDecl
+amb : x -> amb
+ambParams: ambParams

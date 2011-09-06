@@ -1,0 +1,17 @@
+pin configuration:
+	output pin1 13
+
+do-once:
+	dopin1high
+
+dopin1high:
+	setpin1high
+	
+setpin1high:
+	somesomething
+
+somesomething:
+	harharhar
+	
+harharhar:
+	set pin1 high

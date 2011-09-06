@@ -1,0 +1,36 @@
+generate-aterm:
+
+Generates the syntax that we work with.
+
+- Variables are function calls with no args, detection that they are actually variables will happen in typeanalysis
+
+desugar-aterm:
+[W] Desugar the aliasname in the statename declaration to make it unqique
+
+rename-aterm:
+
+map-aterm:
+[W] Store all aliases in namespace, store all states in namespace with corresponding aliasname
+
+typeanalysis-aterm:
+
+eval-aterm:
+
+c-aterm:
+
+c-code:
+
+
+
+
+  
+  "Generate Java code (for selection)"   = generate-java (openeditor) (realtime)                   
+  "Show abstract syntax (for selection)" = generate-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "Desugar" = desugar-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "Rename" = rename-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "Map" = map-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "Typeanalysis" = typeanalysis-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "Evaluate" = eval-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "CAterm" = c-aterm (openeditor) (realtime) (meta) (source)
+  builder					: "Code" = c-code (openeditor) (realtime) (meta) (source)    
+                                                                                                           

@@ -1,0 +1,25 @@
+pin configuration:
+	output motorpin1 1
+	output motorpin2 2
+	output motorpin3 3
+	output motorpin4 4
+ 
+aliases:
+	alias motor1 (motorpin1 motorpin2 motorpin3 motorpin4):
+		state first (high low low low)
+		state second (low high low low)
+		state third (low low high low)
+		state fourth (low low low high)
+
+repeat:
+	switch motor1 first
+	wait 100ms
+	switch motor1 second
+	wait 100ms
+	switch motor1 third
+	wait 100ms
+	switch motor1 fourth
+	wait 100ms
+
+	
+	

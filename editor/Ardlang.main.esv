@@ -1,0 +1,16 @@
+module Ardlang.main
+
+imports Ardlang-Builders Ardlang-Colorer Ardlang-Completions Ardlang-Folding Ardlang-Outliner Ardlang-References Ardlang-Syntax
+
+language General properties
+                  
+  name          : Ardlang
+  id            : ardlang
+  extends       : Root
+                  
+  description   : "Spoofax/IMP-generated editor for the Ardlang language"
+  url           : http://strategoxt.org
+                  
+  extensions    : ard
+  table         : include/Ardlang.tbl
+  start symbols : Start

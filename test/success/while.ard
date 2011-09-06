@@ -1,0 +1,21 @@
+pin configuration:
+	output pin1 1
+	output pin2 2
+	output pin3 3
+	output pin4 4	/* Notice, pin not used */
+	output pin5 5	/* Notice, pin not used */
+	output pin6 6	/* Notice, pin not used */
+	output pin7 7	/* Notice, pin not used */
+
+repeat:
+	while true:
+		set pin1 high
+		set pin1 high
+		while true:
+			set pin2 high
+			set pin2 high
+			while true:
+				set pin3 high
+				set pin3 high
+				set pin3 high
+		set pin1 high

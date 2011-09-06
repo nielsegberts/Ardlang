@@ -1,0 +1,25 @@
+pin configuration:
+	output pin1 1
+	output pin2 2
+	output pin3 3
+	output pin4 4
+	output pin5 5
+	output pin6 6
+	output pin7 7
+
+repeat:
+	if 1==1:
+		set pin1 high
+		set pin1 high
+	else:
+		set pin2 high
+		set pin2 high
+		if true:
+			set pin3 high
+		else:
+			set pin4 high
+			if true:
+				set pin5 high				
+		set pin6 high
+	set pin7 high
+

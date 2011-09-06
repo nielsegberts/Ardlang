@@ -1,0 +1,17 @@
+module namespaces
+
+signature constructors
+
+	Vars				: NameSpace
+	Functions 	 		: Namespace
+	FunctionsExternal 	: Namespace
+	States				: Id -> Namespace
+	Pins			: Namespace
+	PinNumbers		: Namespace
+	PinrefsInAlias	: Namespace
+	PinNrs			: Namespace
+	PinValues		: Id -> Namespace
+	Aliases			: Namespace
+
+	Codes			: Namespace
+	Events			: Namespace

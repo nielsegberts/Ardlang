@@ -1,0 +1,144 @@
+module ardlang
+
+imports
+  libstratego-lib
+  libstratego-gpp
+  libstratego-aterm
+  
+  include/Ardlang
+  lib/editor-common.generated
+  
+  analysis/check
+  analysis/check-indentation
+  phases/desugar
+  phases/rename
+  phases/map
+  phases/eval
+  
+  generation/generate
+  generation/pretty
+  
+  analysis/typeanalysis
+  editor/resolve
+  editor/hover
+  editor/complete
+
+strategies
+
+	analyse = desugar-all; rename-all;  map-all
+	
+rules // Main editor interface (defined by editor/Ardlang-Builders and -References.esv)
+  
+  // Analyzes the current program, returning a tuple with errors, warnings, and notes;
+  // each a list of (term, message) tuples or simply (message) terms.
+  editor-analyze:
+    (ast, path, project-path) -> (ast', errors, warnings, notes)
+    with
+      editor-init;
+      <analyse> ast => ast';
+      errors   := <collect-all(constraint-error, conc)> ast';
+      warnings := <collect-all(constraint-warning, conc)> ast';
+      notes    := <collect-all(constraint-note, conc)> ast'
+
+  // Prints the abstract syntax ATerm of a selection.
+  generate-aterm:
+    (selected, position, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path;
+      result   := selected // we just return the input term
+  
+   // Prints the desugared abstract syntax ATerm of a selection.
+   desugar-aterm:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"desugered.aterm")> path => filename ;
+			<desugar-all> selected => result
+
+   // Prints the mapped abstract syntax ATerm of a selection.
+   rename-aterm:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"renamed.aterm")> path => filename ;
+			<rename-all> <desugar-all> selected => result
+
+   // Prints the mapped abstract syntax ATerm of a selection.
+   map-aterm:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"mapped.aterm")> path => filename ;
+			<map-all> <rename-all> <desugar-all> selected => result
+   
+   /*
+   // Prints the mapped abstract syntax ATerm of a selection.
+   typeanalysis-aterm:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"typeanalysis.aterm")> path => filename ;
+			<typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result
+
+		
+   editor-typeanalysis:
+    (ast, path, project-path) -> (ast', errors, warnings, notes)
+    with
+      editor-init;
+      <typeanalysis-all><map-all> <rename-all> <desugar-all> ast => ast';
+      errors   := <collect-all(constraint-error, conc)> ast';
+      warnings := <collect-all(constraint-warning, conc)> ast';
+      notes    := <collect-all(constraint-note, conc)> ast'
+		
+			*/
+   // Prints the evaluated abstract syntax ATerm of a selection
+   eval-aterm:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"evaluated.aterm")> path => filename ;
+			<eval-all> <typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result		
+
+   // Prints the C aterm
+   c-aterm:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"c.aterm")> path => filename ;
+			<toc-all> <eval-all> <typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result
+			
+   // Prints the C code
+   c-code:
+		(selected, position, ast, path, project-path) -> (filename, result)
+		where
+			<guarantee-extension(|"c")> path => filename ;
+			<pretty-all> <toc-all> <eval-all> <typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result
+			
+   // Compiles and sends the code
+   compile:
+		(selected, position, ast, path, project-path) -> (ast)
+		where (
+			<guarantee-extension(|"c")> path => filename ;
+			<pretty-all> <toc-all> <eval-all> <typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result;
+			!"arduino/Main.cpp" => file;
+			<fopen> (file, "w") => filedescriptor;
+			<fputs> (result, filedescriptor);
+			<fclose> filedescriptor;
+			<refresh-workspace-file> file;
+			<concat-strings> [project-path, "/arduino/build.py"] => buildfile;
+			<debug> buildfile;
+			<call> ("python", [buildfile]) => returnvalue;
+			<debug> returnvalue
+		)
+
+   // Compiles and sends the code
+   upload:
+		(selected, position, ast, path, project-path) -> (ast)
+		where (
+			<pretty-all> <toc-all> <eval-all> <typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result;
+			!"arduino/Main.cpp" => file;
+			<fopen> (file, "w") => filedescriptor;
+			<fputs> (result, filedescriptor);
+			<fclose> filedescriptor;
+			<refresh-workspace-file> file;
+			<concat-strings> [project-path, "/arduino/build.py"] => buildfile;
+			<debug> buildfile;
+			<call> ("python", [buildfile]) => returnvalue;
+			<debug> returnvalue;
+			<concat-strings> [project-path, "/arduino/upload.py"] => uploadfile;
+			<call> ("python", [uploadfile])
+		)

@@ -1,0 +1,8 @@
+pin configuration:
+	output pin1 44
+
+repeat:
+	set pin1 high
+	wait 300ms
+set pin1 low	/* Bad indentation */
+	wait 400ms

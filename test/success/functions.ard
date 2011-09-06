@@ -1,0 +1,11 @@
+pin configuration:
+	output pin1 44
+
+repeat:
+	eigenset pin1 high
+
+eigenset somepin somestate:
+	set somepin somestate
+	
+power first:
+	return first * first

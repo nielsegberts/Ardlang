@@ -1,0 +1,17 @@
+pin configuration:
+	output pin1 44
+	output pin12 45
+	
+	
+
+repeat:
+	var x = high + 34	/* Warning, Bool + Int */
+	
+	var y = 33 - true	/* Warning, Int - Bool */
+	set pin1 high
+	
+	y = digitalw
+
+
+digitalw:
+	return true

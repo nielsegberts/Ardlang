@@ -1,0 +1,36 @@
+pin configuration:
+	output pin1 1
+	output pin2 2	/* Not used */
+	output pin3 3
+	output pin4 4
+	output pin5 5	/* Not used */
+	output pin6 6	/* Not used */
+	output pin7 7	/* Not used */
+
+repeat:
+
+	/* No statements after an if/else/while/for */
+	
+	if true:
+		/* missing statement under if */
+	else:
+		set pin1 high
+
+	if true:
+		set pin4 high
+	else:
+		/* missing statement under else */
+
+	if true:
+	/* missing statement here*/
+		
+	while true:
+	/* missing statement here*/
+		
+	for i from 1 to 3:
+		
+	
+	
+	/* Else without an if */
+	else:
+		set pin3 high

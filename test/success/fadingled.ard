@@ -1,0 +1,20 @@
+pin configuration:
+	output ledPin 9
+
+		
+repeat:
+	
+	
+	 /* fade in from min to max in increments of 1 points: */
+	for fadeValue from 0 to 255:
+    	/* sets the value (range from 0 to 255): */
+		set ledPin fadeValue       
+    	/* wait for 30 milliseconds to see the dimming effect    */
+		wait(30ms)
+
+  /* fade out from max to min in increments of 1 points:*/
+	for fadeValue from 255 to 0:
+	    /* sets the value (range from 0 to 255):*/
+		set ledPin fadeValue         
+	    /* wait for 30 milliseconds to see the dimming effect    */
+		wait(30ms)

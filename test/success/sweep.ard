@@ -1,0 +1,32 @@
+pin configuration:
+	output pin1 1
+	output pin2 2
+	output pin3 3
+	output pin4 4
+
+do-once:
+	set pin1 high
+	set pin2 high
+	set pin3 high
+	set pin4 high 
+	wait 5
+
+
+setdelay pin1 delay:
+	set pin1 high
+	wait delay
+	set pin1 low
+	
+sweep_left:
+	for i from 1 to 4 step 1:
+		setdelay i 200ms
+		
+
+sweep_right:
+	for i from 4 to 1 step -1:
+		setdelay i 200ms	
+
+repeat:
+	sweep_left
+	sweep_right
+	var x = 5

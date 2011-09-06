@@ -1,0 +1,14 @@
+pin configuration:
+	input inputPin 12
+	output ledPin 13
+
+repeat:
+	
+	var readValue = read inputPin
+	print "blabla:" ++ readValue
+	
+	
+	
+
+	set ledPin 1-readValue
+	

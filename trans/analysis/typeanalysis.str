@@ -1,0 +1,90 @@
+module analysis/typeanalysis
+
+imports 
+	include/Ardlang
+	namespaces
+	namespacelib
+	signatures
+	types
+	project
+	
+strategies	
+
+typeanalysis-all = id
+
+rules
+
+		
+	constraint-warning: e@Plus (e1,e2) -> (e, $[Plus operator type error, left type:"[<pp>type-l]" right type:"[<pp>type-r]"])
+    where
+    	<type-of>e1 => type-l;
+    	<type-of>e2 => type-r;
+    	not (
+    		<eq>(type-l,Int());
+    		<eq>(type-r,Int())
+    	)
+    	
+    constraint-warning: e@Minus (e1,e2) -> (e, $[Minus operator type error, left type:"[<pp>type-l]" right type:"[<pp>type-r]"])
+    where
+    	<type-of>e1 => type-l;
+    	<type-of>e2 => type-r;
+    	not (
+    		<eq>(type-l,Int());
+    		<eq>(type-r,Int())
+    	)
+    	
+   constraint-warning: e@Divide (e1,e2) -> (e, $[Division operator type error, left type:"[<pp>type-l]" right type:"[<pp>type-r]"])
+    where
+    	<type-of>e1 => type-l;
+    	<type-of>e2 => type-r;
+    	not (
+    		<eq>(type-l,Int());
+    		<eq>(type-r,Int())
+    	)
+    	
+   constraint-warning: e@Times (e1,e2) -> (e, $[Multiply operator type error, left type:"[<pp>type-l]" right type:"[<pp>type-r]"])
+    where
+    	<type-of>e1 => type-l;
+    	<type-of>e2 => type-r;
+    	not (
+    		<eq>(type-l,Int());
+    		<eq>(type-r,Int())
+    	)
+   
+    
+    	
+    type-of: Bool(v) -> Bool()
+    type-of: PinValue(v) -> Bool()
+    type-of: Plus(_,_) -> Int()
+    type-of: Minus(_,_) -> Int()
+    type-of: Divide(_,_) -> Int()
+    type-of: Times(_,_) -> Int()
+    type-of: Int(_) -> Int()
+    type-of: VarRef(_) -> Int()
+    type-of: FuncCall(_,_) -> Int()
+    type-of: FuncCallNoArgs(_) -> Int()
+    type-of: EQ(_,_) -> Bool()
+    type-of: LT(_,_) -> Bool()
+    type-of: GT(_,_) -> Bool()
+    type-of: LTE(_,_) -> Bool()
+    type-of: GTE(_,_) -> Bool()
+    
+    
+    // here we detect what functions with no args are actually pins/vars
+	// we do this for pinrefs and assignments
+
+	// pin/var reference
+	//typeanalysis:
+//		FuncCallNoArgs(name) -> PinRef(name)
+		//where (
+//			<is-declared(|Pins())> name	
+		//)
+
+	// pin/var reference
+	// wvk: pins can only be high/low, no other value
+//	typeanalysis:
+		//Assignment(name, PinValue(value)) -> Assignment(PinRef(name), PinValue(value))
+		//where (
+//			<is-declared(|Pins())> name			
+		//)
+

@@ -1,0 +1,24 @@
+pin configuration:
+	output pin1 1
+	output pin2 2
+	output pin3 3
+	output pin4 4
+	output pin5 5
+	output pin6 6
+	output pin7 7
+
+repeat:
+
+	for i from 1 to 3:
+		set pin1 high
+		for i from 1 to 3:
+			set pin2 high
+			for i from 1 to 3:
+				set pin3 high
+				set i high
+				set pin3 high
+			set pin2 high
+			set pin2 high
+			set pin2 high
+		set pin1 high
+

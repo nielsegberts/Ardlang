@@ -1,0 +1,42 @@
+Perform checks for:
+
+== PINS ==
+
+DONE - duplicate pin number declarations  - does not work with A0-A5
+DONE - duplicate pin name declarations 
+DONE - undeclared pins 									
+DONE - unrefered pins (Notice)
+
+== ALIASES ==
+
+DONE - undeclared aliases								
+DONE - undeclared statename in corresponding alias
+DONE - different pincount/valuecount
+DONE - same state pinvalues
+DONE - same state names in same alias
+DONE - alias with only one state (Notice)
+
+DONE - unrefered aliases (Warning)
+DONE - unrefered states (Notice)
+
+== FUNCTIONS ==
+DONE - nonexisting functions
+DONE - incorrect parameter count
+DONE - uncalled functions
+
+
+== MIXED ==
+DONE - pin declaration and var declaration with same name
+
+
+- type implementeren/checken (wilde we nog booleans/strings gaan implementeren?
+- naast input/output ook analog input output
+- checken of je een output/input/digital/analog niet op de verkeerde
+manier gebruikt
+- zoveel als kan proberen te checken of een operatie wel kan (set 4
+high terwijl die niet geinit is)
+- globale variablen kunnen declareren
+- functies moeten nog in de juiste volgorde gedeclareerd worden,
+recursie met 2 functies is dus nog niet mogelijk
+- nadenken over meerdere repeat statements?
+- restrictions?

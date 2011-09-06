@@ -1,0 +1,6 @@
+pin configuration:
+
+	
+do-once:
+	set 40 high
+	switch 30 high	/* Error */

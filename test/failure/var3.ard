@@ -1,0 +1,5 @@
+
+repeat:
+	var bla = 2
+	set bla high
+	set bla 2+1     /* Wvk: Error because 4 is no high/low? */

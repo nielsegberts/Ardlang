@@ -1,0 +1,23 @@
+pin configuration:
+	output motorpin1 1
+	input motorpin2 2
+	output motorpin3 3
+ 
+aliases:
+	alias motor1 (motorpin1 motorpin2 motorpin3 motorpin4): /* Two errors */
+		state first (high low low low)
+		state second (low high low low)
+		state third (low low high low)	/* Note */
+		state fourth (low low low high)	/* Warning */
+		state fifth (low low low high)	/* Warning */
+
+repeat:
+	switch motor1 first
+	wait 100ms
+	switch motor1 second
+	wait 100ms
+	switch motor1 fourth
+	wait 100ms
+
+	
+	

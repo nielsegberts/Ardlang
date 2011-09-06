@@ -1,0 +1,341 @@
+module generation/generate
+
+imports
+	include/Ardlang
+	trans/ardlang
+	signatures
+	generation/csignature
+	include/C
+	namespacelib	
+	namespaces
+	
+strategies
+
+toc-all = alltd(get-renamed);toc
+
+rules
+	
+
+	toc: Program(pinconfig, alias, globals, externals, code) -> TranslationUnit(
+															[Id("#include \"WProgram.h\""),
+															Id("#include \"ardlang.h\""),
+															Id("#include \"user_functions.h\""),
+															<toc> pinconfig,
+															<toc> globals,
+															<fun-decls> code,
+														  	<toc> code,
+														  	<toc-main> code]
+														  )
+	toc: Globals() -> []
+	toc: Globals(globals) -> <map(toc)> globals
+	
+	fun-decls: Codes(list) -> <map(fun-decls)> list
+	fun-decls: Repeat(name, statements) -> Declaration2(TypeSpec([],Void(),[]),
+												[IdDecl([],Id(name),Some(ParamList([])))]
+										   )
+	fun-decls: DoOnce(name, statements) -> Declaration2(TypeSpec([],Void(),[]),
+												[IdDecl([],Id(name),Some(ParamList([])))]
+										   )
+	fun-decls: Event(name, statements) -> Declaration2(TypeSpec([],Void(),[]),
+												[IdDecl([],Id(name),Some(ParamList([])))]
+										   )
+	fun-decls: d@FuncDecl(name, args, statements) -> Declaration2(TypeSpec([],Int(),[]),
+														[IdDecl([],Id(name),Some(ParamList(<map(toc-args)> args)))]
+										   		     )
+	
+	toc-main: Codes(codes) -> FunDef(
+								TypeSpec([], Int(), [])
+								,IdDecl([], Id("main"), Some(ParamList([])))
+								,Compound(
+									[]
+									,[Stat(FunCall(Id("init"), [])),
+									  Stat(Id("Serial.begin(9600)")),
+									  Stat(FunCall(Id("setup"), [])),
+									  <map(toc-main-once)> codes,
+									  Declaration2(TypeSpec([],Char(),[]),[IdDecl([],Id("input_array"),Some(ArrayDecl(None(),Some(IntConst("16")))))]),
+		    				   			Declaration2(TypeSpec([],Int(),[]),[DeclInit(
+												IdDecl([],Id("i"),None()),
+												AssignInit(IntConst("0"))
+		    				   				  )]),
+									  <map(events)> codes,
+									  While(Id("true"),Compound([],
+									    [<map(bool-events)> codes,
+		    				   			While(Gt(FunCall(Id("Serial.available"),[]),IntConst("0")),Compound([],[
+		    				   				Stat(Assign(ArrayIndex(Id("input_array"),Id("i")),AssignEq(),FunCall(Field(Id("Serial"),Id("read")),[]))),
+		    				   				Stat(PostIncr(Id("i")))
+		    				   			])),
+		    				   			If(Equal(ArrayIndex(Id("input_array"),Subt(Id("i"),IntConst("1"))),CharConst("'~'")),Compound([],[
+		    				   				Declaration2(TypeSpec([],Int(),[]),[IdDecl([],Id("j"),None())]),
+		    				   				<map(if-events)> codes,
+		    				   				Stat(Assign(Id("i"),AssignEq(),IntConst("0")))
+		    				   			])),
+									  	<map(toc-main-repeat)> codes]
+									  )),
+									  Return(IntConst(0))
+									 ]
+								)
+			  				  )
+	
+	events: FuncDecl(name, args, statements) -> []	  
+	events: Repeat(name, statements) -> []
+	events: DoOnce(name, statements) -> []
+	events: Event(name, statements) -> 	[Declaration2(TypeSpec([],Char(),[]),[DeclInit(
+											IdDecl([],Id(<concat-strings> [name,"_string"]),Some(ArrayDecl(None(),None())))
+										,AssignInit(StringLit([<concat-strings> ["\"",name,"\""]])))])]
+
+	if-events: FuncDecl(name, args, statements) -> []
+	if-events: Repeat(name, statements) -> []
+	if-events: DoOnce(name, statements) -> []
+	if-events: Event(name, statements) -> [IfElse(Equal(Subt(Id("i"),IntConst("1")),IntConst(<string-length> name)),Compound([],[
+												For(Assign(Id("j"),AssignEq(),IntConst("0")),Lt(Id("j"),IntConst(<string-length> name)),PostIncr(Id("j")),Compound([],[
+													If(NotEqual(ArrayIndex(Id("input_array"),Id("j")),ArrayIndex(Id(<concat-strings> [name,"_string"]),Id("j"))),Compound([],[
+														Stat(Assign(Id(<concat-strings> [name,"_bool"]),AssignEq(),Id("false"))),
+														Break()
+													]))
+												]))
+												
+											]),Compound([],[
+												Stat(Assign(Id(<concat-strings> [name,"_bool"]),AssignEq(),Id("false")))
+											])),
+											If(Id(<concat-strings> [name,"_bool"]),Compound([],[Stat(FunCall(Id(name),[]))]))]
+			  				  
+	bool-events: FuncDecl(name, args, statements) -> []
+	bool-events: Repeat(name, statements) -> []
+	bool-events: DoOnce(name, statements) -> []
+	bool-events: Event(name, statements) -> Declaration2(TypeSpec([],TypeId("bool"),[]),[DeclInit(
+											  IdDecl([],Id(<concat-strings> [name, "_bool"]),None())
+	 										 ,AssignInit(Id("true")))])
+	 
+	isRepeat: Repeat(statements) -> Repeat(statements)
+	isDoOnce: DoOnce(statements) -> DoOnce(statements)
+
+	
+	toc-main-once: DoOnce(name, statements) -> Stat(FunCall(Id(name), []))
+	toc-main-once: code -> []
+	where not (
+		<isDoOnce> code
+	)
+		
+	toc-main-repeat: Repeat(name, statements) -> Stat(FunCall(Id(name), []))
+	toc-main-repeat: code -> []
+	where not (
+		<isRepeat> code
+	)			
+	
+	// Here I try to map a configuration (MODE, PINNAME, NUMBER) to:
+	// int PINNAME = NUMBER;
+	// pinMode(PINNAME, MODE);
+	//
+	// this however did not work yet
+	// I'm waiting for Eelco Visser to send me the parse-c application so I can see
+	// how the aterm of this bit of C looks like
+	
+	toc: Pinconfigurations(configs) -> [<map(toc-pin-decl)> configs,
+									   FunDef(
+										TypeSpec([], Void(), [])
+										,IdDecl([], Id("setup"), Some(ParamList([])))
+										,Compound(
+									 		[]
+											,<map(toc)> configs
+									    )
+									  )]
+	toc: Pinconfigurations() -> []
+	 
+	toc-pin-decl: Configuration(mode, PinName(name), number) -> Declaration2(TypeSpec([],Int(),[]),[DeclInit(
+																	IdDecl([],Id(name),None()),
+																	AssignInit(IntConst(number))
+		    													)])  
+	 
+	toc: Configuration(mode, pin, number) -> Stat(FunCall(Id("pinMode"), [<toc> pin, <toc> mode]))
+	
+	toc: Codes(codes) -> [<map(toc)> codes]
+	
+	// Generates functions for the repeats/doonce
+	// Currently all repeats are named 'repeat1'
+	// Still neeed to be fixed
+	//
+	// Also it assumes statements is an array
+	// however this does not have to be the case when there is only 1 statement
+	// this is an error and should be fixed
+	// (statemetns should allways be an array)
+	toc: Repeat(name, statements) -> FunDef(
+									TypeSpec([], Void(), [])
+									,IdDecl([], Id(name), Some(ParamList([])))
+									,Compound(
+									 	[]
+										,<map(toc-stat)> statements
+									)
+								)
+
+	toc: DoOnce(name, statements) -> FunDef(
+										TypeSpec([], Void(), [])
+										,IdDecl([], Id(name), Some(ParamList([])))
+										,Compound(
+										 	[]
+											,<map(toc-stat)> statements
+										)
+									)
+								
+	toc: Event(name, statements) -> FunDef(
+										TypeSpec([], Void(), [])
+										,IdDecl([], Id(name), Some(ParamList([])))
+										,Compound(
+										 	[]
+											,<map(toc-stat)> statements
+										)
+									)
+
+	// Function declaration
+	toc: FuncDecl(name, args, statements) -> FunDef(
+											TypeSpec([], Int(), [])
+											,IdDecl([], Id(name), Some(ParamList(<map(toc-args)> args)))
+											,Compound(
+									 			[]
+											,<map(toc-stat)> statements
+											)
+										   )
+	
+	toc-stat: statement -> Stat(<toc> statement)
+	where not (
+		<isNonStat> statement
+	)
+	
+	toc-stat: nonstat -> nonstat' 
+	where (
+		<isNonStat> nonstat;
+		//<debug> "bla1";
+		<toc> nonstat => nonstat'
+		//;<debug> "bla2"
+	)
+	
+	isNonStat: d@Return(exp) -> d
+	isNonStat: d@VarDecl(name, exp) -> d
+	isNonStat: d@IfElse(cond, stat1, stat2) -> d
+	isNonStat: d@If(cond, stat) -> d
+	isNonStat: d@For(index, from, to, step, statements) -> d
+	isNonStat: d@While(condition, statements) -> d
+	isNonStat: d@Print(expressions) -> d
+	
+	toc-args: ParamDecl(name) -> ParamDecl(TypeSpec([],Int(),[]),Some(IdDecl([],Id(name),None())))
+	
+	// Statements
+	toc: VarDecl(name, exp) -> Declaration2(TypeSpec([],Int(),[]),[DeclInit(
+									IdDecl([],Id(name),None()),
+									AssignInit(<toc> exp)
+		    				   )])  
+
+	
+	toc: FuncCall(name,arguments) -> FunCall(Id(name), <map(toc)> arguments)
+	toc: FuncCallNoArgs(name) -> FunCall(Id(name), [])
+
+	toc: Assignment(name, exp) -> Assign(<toc> name,AssignEq(),<toc> exp)
+	
+	toc: Return(exp) -> Return(<toc> exp)
+	where (
+		<debug(!exp)> "return"
+	)
+	
+	// code paths
+	toc: IfElse(condition, statements1, statements2) -> IfElse(
+															<toc> condition,
+															Compound([],
+																<map(toc-stat)> statements1
+															),
+															Compound([],
+																<map(toc-stat)> statements2
+															)
+														)
+	
+	toc: If(condition, statements) -> If(
+										<toc> condition,
+										Compound([],
+											<map(toc)> statements
+										)
+									  )
+	
+	toc: For(index, from, to, step, statements) -> [Declaration2(TypeSpec([],Int(),[]),
+	      												IdDecl([],Id(index),None())),
+													For(
+														<toc> Assignment(VarRef(index), from),
+														<toc><lte-or-gte>(from,to,step,index),
+														Assign(Id(index),AssignEq(),Add(Id(index),<toc> step)),
+														Compound([],
+															<map(toc-stat)> statements
+														)
+													)
+												]
+									where <debug> index
+	
+	
+	lte-or-gte: (from,to,Int(step),index) -> LTE(VarRef(index), to)	
+		where
+			<lt>(step, 0)										
+	
+	lte-or-gte: (from,to,Int(step),index) -> GTE(VarRef(index), to)	
+		where
+			<gt>(step,0)	
+			
+	
+			
+					
+	
+	toc: While(condition, statements) -> While(
+											<toc> condition,
+											Compound([],
+												<map(toc-stat)> statements
+											)
+										)
+	
+	toc: Print(arguments) -> [<map(toc-print)> arguments,
+							  Stat(FunCall(Id("Serial.println"),[]))]
+	
+
+	toc-print: expression -> Stat(FunCall(Id("Serial.print"), <toc> expression))
+	where not (
+		<is-String> expression
+	)
+	
+	toc-print: String(expression) -> Stat(FunCall(Id("Serial.print"), StringLit(<concat-strings> ["\"",expression,"\""])))
+	
+	is-String: String(content) -> String(content)
+
+
+	// Expressions
+	toc: Plus(exp1, exp2) -> Add(<toc> exp1, <toc> exp2)
+	toc: Minus(exp1, exp2) -> Subt(<toc> exp1, <toc> exp2)
+	toc: Times(exp1, exp2) -> Mul(<toc> exp1, <toc> exp2)
+	toc: Divide(exp1, exp2) -> Div(<toc> exp1, <toc> exp2)
+	
+	// conditions
+	toc: GT(exp1, exp2) -> Gt(<toc> exp1, <toc> exp2)
+	toc: LT(exp1, exp2) -> Lt(<toc> exp1, <toc> exp2)
+	toc: EQ(exp1, exp2) -> Equal(<toc> exp1, <toc> exp2)
+	toc: GTE(exp1, exp2) -> Ge(<toc> exp1, <toc> exp2)
+	toc: LTE(exp1, exp2) -> Le(<toc> exp1, <toc> exp2)
+	
+	// Obvious stuff
+	toc: PinName(name) -> Id(name)
+	toc: PinValue("high") -> Id("HIGH")
+	toc: PinValue("low") -> Id("LOW")
+	toc: Mode("input") -> Id("INPUT")
+	toc: Mode("output") -> Id("OUTPUT")
+	toc: Int(number) -> IntConst(number)
+	
+	// do we still need these?
+	toc: PinRef(name) -> Id(<rename-declaration(|Vars())> name)
+	toc: PinRef(name) -> Id(name)
+	where not (
+		<get-declaration(|Vars())> name
+	)
+	
+	toc: Bool(v) -> Id(v)
+
+	toc: VarRef(name) -> Id(name)
+	
+	// For debugging purposes
+	//toc: bla->bla
+	//where
+    //  <debug> bla
+	
+	get-renamed: name{newname} -> newname
+

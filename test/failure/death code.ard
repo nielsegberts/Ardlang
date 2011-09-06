@@ -1,0 +1,34 @@
+
+
+do-once:
+	var x = 0
+	
+	if 134<(12*17):
+		x = 1
+	else:
+		x = 2			/* Death code */
+		
+	
+	var x = 45+(4<5)
+	
+	
+	if 4<6 && 6<4 || false:
+		x=0
+	
+	if x<0:
+		x=0
+	
+	while 101>102:
+		x = 3			/* Death code */
+	
+	
+	for i from 1 to 1:
+		x = 4
+
+		
+	while false:
+		x = 3			/* Death code */
+		
+	
+	var y = 5+(3<4)
+		

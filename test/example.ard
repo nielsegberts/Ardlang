@@ -1,0 +1,12 @@
+pin configuration:
+	output pin1 45
+
+repeat:
+	set pin1 high 
+	wait 300ms
+	
+	set pin1 low
+	wait 400ms
+	
+do-once:
+	set pin1 high

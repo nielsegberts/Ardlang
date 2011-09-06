@@ -1,0 +1,8 @@
+pin configuration:
+	output pin13 13
+	
+external functions:
+	digitalWrite
+
+do-once:
+	digitalWrite 13 high

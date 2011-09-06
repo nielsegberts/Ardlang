@@ -1,0 +1,84 @@
+module Ardlang-Completions
+
+imports 
+	Ardlang-Completions.generated
+	
+
+completions
+                                                                   
+  // This file is used to define content completion.               
+  //                                                               
+  // See the imported file for a brief introduction and examples.  
+                                                                   
+
+completions
+                                                                 
+  // Syntax completion:                                          
+                                                                 /*
+  completion template : Start =      "module " <m> (blank)       
+                                                                 
+  completion template : Definition = "entity " <e> " {}" (blank) 
+                                                                 
+  completion template : Property =   <x> " : " <T> (blank)       */
+                                                                 
+
+completions
+
+	completion keyword	: "input " 
+	completion keyword	: "output "
+	completion keyword	: "state "
+	completion keyword	: "high"
+	completion keyword	: "low"
+	completion keyword	: "true"
+	completion keyword	: "false"
+	completion keyword	: "var "
+	completion keyword	: "set "
+	completion keyword	: "get "
+	completion keyword	: "wait "
+	completion keyword  : "return "	
+	
+	completion template : "if " <c> ":\n" "\te\n" "else:" "\n\te"
+	completion template : "if " <c> ":\n" "\te"
+	completion template : "while " <c> ":\n\te"
+	completion template : "for " <index> " from e to e:\n" "\te"
+	completion template : "for " <index> " from e to e step e:\n" "\te"
+	completion template : "pin configuration:\n" "\toutput pin1 " <3>
+	completion template : "aliases:\n" "\talias " <name> " (pin1 pin2 pin3):\n" "\t\tstate x (high low low)"
+ 	completion template : "repeat:\n" "\t" <code>
+ 	completion template : "do-once:\n" "\t" <code>
+ 	completion template : "print \"" <output> "\""
+ 	completion template : "event \" " <name> "\":\n\t"
+ 			
+                                         
+  completion proposer                  : editor-complete
+                                         
+
+
+  completion trigger                   : "if"
+  completion trigger                   : "while"
+  completion trigger                   : "for"
+  completion trigger                   : "pin c"
+  completion trigger                   : "alias"
+  completion trigger                   : "repeat"
+  completion trigger                   : "do-"
+  completion trigger                   : "print"
+  completion trigger                   : "event"
+  
+  
+
+  /*
+  
+  completions
+
+	completion keyword  : "return"
+	completion keyword	: "class"
+	completion keyword	: "new"
+	completion keyword	: "length"
+    completion template : "System.out.println(" <e> ");"
+	completion template : "if (" <c> ")" "\n\te;\n" "else" "\n\te;"
+	completion template : "while (" <c> ")" "\n\te;"
+	completion template : "public static void main(String[] args) {" "\n\t" <s> "\n" "}"
+
+completions
+	
+	completion proposer : editor-complete*/

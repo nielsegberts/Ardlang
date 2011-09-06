@@ -1,0 +1,32 @@
+module lexical/Ardlang-Comments
+
+exports
+	lexical syntax
+    	
+		Comment        					-> LAYOUT
+		
+		"/*" CommChar* "*/"				-> Comment
+		%%"//" ~[\n\r]* ([\n\r] | EOF)	-> LAYOUT
+		~[\/\*]							-> CommChar 
+    	Asterisk						-> CommChar
+    	Slash							-> CommChar
+    	
+    	[\*]							-> Asterisk
+		[\/]							-> Slash
+										-> EOF
+
+	lexical syntax
+		
+		Comment							-> CommChar
+		
+	lexical restrictions
+		
+		Asterisk -/- [\/]
+		Slash -/- [\*]
+		EOF	-/- ~[]
+
+	context-free restrictions
+  
+		LAYOUT? -/- [\/].[\*]
+		LAYOUT? -/- [\/].[\/]
+				

@@ -1,0 +1,79 @@
+%% Grammar for the Ardlang language
+module Ardlang
+
+imports
+	Ardlang-Expressions
+	Ardlang-Statements
+	lexical/Ardlang-Comments
+	lexical/Ardlang-Constants
+	lexical/Ardlang-Identifiers
+	lexical/Ardlang-Whitespace
+
+exports
+
+  context-free start-symbols
+    Start
+
+  context-free syntax
+  
+    Emptyline* PinconfigurationBlock AliasesBlock ExternalsBlock GlobalsBlock CodeBlock   -> Start {cons("Program")}
+	
+														    					-> PinconfigurationBlock {cons("Pinconfigurations")}
+														    					-> AliasesBlock {cons("Aliases")}
+														    					-> ExternalsBlock {cons("Externals")}
+														    					-> GlobalsBlock {cons("Globals")}
+    
+    "pin configuration:" Emptyline* PinConfiguration*							-> PinconfigurationBlock {cons("Pinconfigurations")}    
+    Newline Mode PinName PinNr Emptyline*										-> PinConfiguration {cons("PinDef")}
+    Id	-> PinName		{cons("PinName")}
+	Id	-> PinRef		{cons("PinRef")}
+	Id	-> StateName	{cons("StateName")}
+	
+	Int			-> PinNr
+	AnalogPin 	-> PinNr
+		
+	Id		-> VarRef		{cons("VarRef")}
+	
+    "aliases:" Emptyline* Alias*												-> AliasesBlock {cons("Aliases")}
+   
+    Newline "alias" AliasName "(" PinRef* "):" Emptyline* AliasState*			-> Alias {cons("Alias")}
+    "external functions:" Emptyline* External*									-> ExternalsBlock {cons("Externals")}			    				
+	Newline Id Emptyline*														-> External {cons("External")} 																
+  									
+    Newline "state" StateName PinValueList Emptyline*							-> AliasState {cons("AliasState")} 								
+    "(" PinValue* ")"															-> PinValueList {cons("PinValueList")}
+    Id																			-> AliasName {cons("AliasName")}
+
+	"globals:" Emptyline* Global*												-> GlobalsBlock {cons("Globals")}
+	
+	Newline GlobalVar Emptyline*												-> Global {cons("Global")}
+
+    Id										-> Mode {cons("Mode")}
+    
+    Newline Statement	 					-> Line {cons("Line")}
+    
+    "repeat:"								-> Do {prefer, cons("Repeat")}
+    "do-once:"								-> Do {prefer, cons("DoOnce")}
+    "event \"" Id "\":"						-> Do {prefer, cons("Event")}
+
+    Do Line*								-> Code {cons("Code")}
+
+    Newline Id Args* ":" Line*				-> Code {cons("FuncDecl")}
+    Id										-> Args {cons("ParamDecl")}
+    
+    Code*									-> CodeBlock {cons("Codes")}
+    
+    Emptyline 								-> Line {cons("Emptyline")}
+
+   
+	
+	PinValueId								-> PinValue {cons("PinValue")}
+
+  	
+  	"switch" AliasStateRef					-> Exp{cons("Switch")}
+  	AliasRef Id								-> AliasStateRef {cons("AliasStateRef")}
+  	Id										-> AliasRef {cons("AliasRef")}
+		
+  	
+  	
+  	

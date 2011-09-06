@@ -1,0 +1,8 @@
+pin configuration:
+	output pin1 44
+
+
+repeat:
+	var a = b c
+
+

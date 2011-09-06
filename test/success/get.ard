@@ -1,0 +1,19 @@
+pin configuration:
+	output pin1 1
+	output pin2 2
+
+
+repeat:
+	set pin1 high
+	wait 500ms
+	
+	var value1 = get pin1
+	set pin2 value1
+	set pin1 low
+	wait 500ms
+	
+	value1 = get pin1
+	set pin2 value1	
+
+	
+

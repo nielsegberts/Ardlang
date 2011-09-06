@@ -1,0 +1,11 @@
+external functions:
+	digitalWrite	/* Duplicate name */
+	digitalWrite	/* Duplicate name */
+	wouter2
+	wosdfsdfuter
+	read			/* Error, this function already exists */
+	
+do-once:
+	wosdfsdfuter 4
+
+

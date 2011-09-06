@@ -1,0 +1,10 @@
+pin configuration:
+	output pin1 44 	
+	input pin2 45
+	
+do-once:	
+	set pin1 high
+	get pin1 high			/* This works fine, because get only retrieves a previously setted value */
+	set pin2 high			/* Error, set call on input pin */
+	
+	var x = read pin1		/* Error, read call on output pin */		

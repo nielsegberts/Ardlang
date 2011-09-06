@@ -1,0 +1,6 @@
+module types
+
+signature constructors
+
+Int : Type
+Bool : Type

@@ -1,0 +1,21 @@
+pin configuration:
+
+
+do-once:
+	var x = 3<4
+	var y = 4<4
+	var z = 5>4
+	
+	var a = 5*3+15	
+
+
+	var aa = 3<=4
+	var ab = 4<=4
+	var ac = 4>=4
+	var ad = 5>=4
+	
+	
+	var ae = 5==4
+	
+	var af = (1+2+3+4)-(4*4*3)+100/10-100+80+8*51
+

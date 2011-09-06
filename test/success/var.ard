@@ -1,0 +1,7 @@
+pin configuration:
+	output pin1 12
+
+repeat:
+	var bla = 2 
+	set bla high
+	set pin1 high

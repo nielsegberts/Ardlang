@@ -1,0 +1,148 @@
+module analysis/map
+
+imports 
+	include/Ardlang
+	namespaces
+	namespacelib
+	signatures
+	project
+	
+strategies
+
+// Sequence: (IMPORTANT)
+//	1. Store all declarations
+//	2. Using the stored decls, modify pin/varref things
+//  3. Store all references
+
+map-all = topdown(try(store));alltd(var2pinref);topdown(try(store-ref))//;enable-namespace-debugging
+
+rules // STORE DECLARATIONS
+	
+	store: d@VarDecl(name, val) -> d
+	where
+		<store-declaration(|Vars())> (name, d) 
+	
+	
+	store: d@External(name) -> d
+	where
+		<store-declaration(|Functions())> (name, d) 
+		
+	// Events
+	store: d@Event(name, codes) -> d
+	where
+		<store-declaration(|Events())> (name, d) 
+		
+		
+	
+	
+	store: d@ParamDecl(name) -> d
+	where
+		<store-declaration(|Vars())> (name, d) 
+	
+	// Functions
+	store: d@FuncDecl(name, args, statements) -> d
+	where
+		<store-declaration(|Functions())> (name, d)		
+	
+	// Aliasses
+	store: d@Alias(AliasName(name),pinrefs,_) -> d
+	where
+		<store-declaration(|Aliases())>(name, d);
+		<map(store-pinref)>pinrefs
+		
+	
+	store-pinref: d@PinRef(name) -> d
+	where	
+		<store-declaration(|PinrefsInAlias())> (name, d) 
+	
+	
+	// Pins/variables that are defined by a configuration
+	store: d@Configuration(_,PinName(name), number) -> d
+	where
+		<store-declaration(|Pins())>(name, d);
+		<store-declaration(|PinNumbers())>(number, d)
+		//;<debug>$[Store pin: [name]]
+		 
+	store: d@For(index, _, _, _, _) -> d
+	where
+		<store-declaration(|Vars())>(index, d)
+
+rules // STORE REFERENCES
+	
+	store-ref: d@FuncCall(name, args) -> d
+	where
+		<store-reference(|Functions())> name
+		
+	store-ref: d@FuncCallNoArgs(name) -> d
+	where
+		<store-reference(|Functions())> name
+	
+		 
+	store-ref: d@PinRef(name) -> d
+	where
+		//<debug>"PinRef";<debug>name;
+		<store-reference(|Pins())> name
+		
+		
+	store-ref: d@VarRef(name) -> d
+	where
+		//<debug>"VarRef";<debug>name;
+		<store-reference(|Vars())> name
+		
+	store-ref: d@AliasRef(alias) -> d
+	where
+		<store-reference(|Aliases())>alias
+	
+	
+	
+	store-ref: d@AliasStateRef(AliasRef(alias),state) -> d
+	where
+		<store-reference(|States(alias))>state
+
+	
+	
+
+	// Other pins/variables that are defined by the user
+	// This is going to go as we are going to explicitly define vars
+	/*
+	store: d@Assignment(name, value) -> <store-declaration(|Pins())>(name, d)
+	where not (
+		<is-declared(|Pins())> name
+	)
+	*/
+	// States
+	store: d@AliasState(StateName(alias, state),_) -> d
+	where
+		<store-declaration(|States(alias))>(state, d);
+		<store-declaration(|PinValues(alias))>(state, <project-pinvalues>d)
+
+
+	
+
+	
+	/*
+	store:  d@AliasState(StateName(alias,state),PinValueList(pinvalues)) -> d
+    where
+		<store-declaration(|PinValues(alias))> (state,pinvalues)
+*/
+					
+	// WvK: This must be performed AFTER mapping phase because it needs the namespaces to be filled
+	/*
+	A varref can only become a pinref in a function parameter, because:
+		set PINREF high
+		PINREF = high   <- should raise errror!
+		*/
+	/*
+	var2pinref: FuncCall("set", params) -> FuncCall("set", params')	
+	where
+		<map(try(var2pin))>params => params'
+		*/
+		
+rules
+		
+	var2pinref: VarRef(n) -> PinRef(n)	
+	where
+		 (
+			<is-declared(|Pins())>n
+		)
+		

@@ -1,0 +1,13 @@
+pin configuration:
+	output pin1 44
+
+repeat:
+	var a = 0
+	a = 5+5 /*bla*/ 
+/*bla
+	bla bla
+	
+	*/
+	a = 5+5 
+
+	

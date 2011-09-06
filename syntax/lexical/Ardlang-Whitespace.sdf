@@ -1,0 +1,20 @@
+module lexical/Ardlang-Whitespace
+exports
+
+
+  lexical syntax
+
+    [\t]					-> Tab
+    " "						-> Tab
+	"\n" Tab*				-> Newline {prefer}
+	"\n" Tab*				-> Emptyline
+    
+    [\ \r\t] 				-> LAYOUT
+    
+  context-free restrictions
+  
+    %% Ensure greedy matching
+    LAYOUT? -/- [\ \r\t]
+    Newline -/- [\t\n\ ]
+    Emptyline -/- [\t\ ]
+
