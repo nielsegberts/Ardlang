@@ -8,7 +8,7 @@
   <style type="text/css">
     body {
       margin-top: 1.0em;
-      background-color: #fff;
+      background-color: #EEFFFF;
       font-family: Helvetica, Arial, FreeSans, san-serif;
       color: #000000;
     }
@@ -18,20 +18,21 @@
     }
     h1 { font-size: 3.8em; color: #000; margin-bottom: 3px; }
     h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #000; }
-    h3 { text-align: center; color: #000; }
-    a { color: #000; }
+    h1 a { text-decoration: nongoe; color: #333300; }
+    h2 { font-size: 1.5em; color: #336600; }
+    h3 { text-align: center; color: #339900; margin-top: 80px; }
+    a { color: #0000CC; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #000}
+    pre { background: #000; color: #fff; padding: 15px }
+    hr { border: 0; width: 80%; border-bottom: 1px solid #000 }
     .footer { text-align:center; padding-top:30px; font-style: italic; }
 
+    .int { color: rgb(14,94,90) }
     .kw { color: rgb(127,0,85) }
     .kw2 { color: rgb(16,32,255) }
-    .int { color: rgb(14,94,90) }
-    .indent { margin-left: 50px }
+    .indent { margin-left:50px }
+    
   </style>
 </head>
 
@@ -42,9 +43,9 @@
 
     <div class="download">
       <a href="http://github.com/nielsegberts/Ardlang/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+        <img alt="Download zip" border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
       <a href="http://github.com/nielsegberts/Ardlang/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+        <img alt="Download tar" border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
     </div>
 
     <h1><a href="http://github.com/nielsegberts/Ardlang">Ardlang</a>
@@ -59,16 +60,21 @@
 Oskar van Rest (oskarvanrest@gmail.com)<br/>
 Wouter van Koppen (w.p.vankoppen@student.tudelft.nl)<br />
 <br/>
-<br/>      </p>
+<br/>
+</p>
 <h2>Contact</h2>
 <p>Niels Egberts (github@nielsegberts.nl)
-<br/>      </p>
+<br/>
+</p>
 
 
     <h2>About</h2>
-    The Ardlang language is a language specifically tailored for the Arduino. The Arduino is an open-source electronics prototyping platform based on flexible, easy-to-use hardware and software. It's intended for artists, designers, hobbyists, and anyone interested in creating interactive objects or environments. 
+    
+    <p>The Ardlang language is a language specifically tailored for the <a href="http://arduino.cc/">Arduino</a>. The Arduino is an open-source electronics prototyping platform based on flexible, easy-to-use hardware and software. It's intended for artists, designers, hobbyists, and anyone interested in creating interactive objects or environments. </p>
 
-Arduino already comes with its own language, a subset of C++, but a language specifically build for the Arduino has many advantages like:
+    <img alt="Arduino uno" src="arduino_uno.jpg" />
+
+<p>Arduino already comes with its own language, a subset of C++, but a language specifically build for the Arduino has many advantages like:
 
     <ul>
         <li>Self-documenting code</li>
@@ -77,9 +83,12 @@ Arduino already comes with its own language, a subset of C++, but a language spe
         <li>Easier syntax</li>
         <li>Less code</li>
         <li>Domain specific language constructs</li>
+        <li>Pythonic indentation (ok, arguably a good thing)</li>
     </ul>
 
-Ardlang is developed in the Spoofax Language Workbench and is integrated into the Eclipse IDE.
+Ardlang is developed in the <a href="http://spoofax.org/">Spoofax Language Workbench</a> and is integrated into the <a href="https://eclipse.org/">Eclipse IDE.</a></p>
+
+The langauge is in a usable state, all the features on this page have been tested, altough bugs can still pop up. There is however no easily installable Eclipse plugin yet, and the plugin currently only works on Linux, and again only if you properly set it up.
 
     <h2>Example</h2>
 
@@ -87,22 +96,71 @@ In this example we set pin 13 as an output pin, and then repeatedly turn it on a
 
 <p>
 <span class="kw">pin configuration:</span><br/>
-<span class="indent"><span class="kw">output</span> pin1 <span class="int">13</span><br/>
+<span class="indent" /><span class="kw">output</span> pin1 <span class="int">13</span><br/>
 <br/>
 <span class="kw">repeat:</span><br/>
-<span class="indent">set pin1 <span class="kw2">high</span><br/>
-<span class="indent">wait <span class="int">200ms</span><br/>
+<span class="indent" />set pin1 <span class="kw2">high</span><br/>
+<span class="indent" />wait <span class="int">200ms</span><br/>
 <br/>	
-<span class="indent">set pin1 <span class="kw2">low</span><br/>
-<span class="indent">wait <span class="int">200ms</span><br/>
+<span class="indent" />set pin1 <span class="kw2">low</span><br/>
+<span class="indent" />wait <span class="int">200ms</span><br/>
 </p>
 
+    <h2>Features</h2>
+
+    <p>Some of the features will be highlighted in the next sections. This list is however not exhaustive, but an indication of what Ardlang can do.
+
+    <h3>Domain specific errors, warnings, notices and hover helps</h3>
+
+    <p>In the current language for the Arduino the error messages can be very cryptic for new programmers as they will have to decipher the GCC error messages. The Adlang compiler can give better messages and can check for more things, like if a pin is used correctly as an input/output.</p>
+
+    <img alt="Error" src="error.png" />
+    <img alt="Warning" src="warning.png" />
+    <img alt="Hover help" src="hover.png" />
+
+    <h3>Repeat and do once code-blocks</h3>
+    
+    <p>For initialisation or things that only have to be once do-once blocks can be used. Repeat blocks will be executed as much as possible. Currently repeat blocks are not executed concurrently.</p>
+
+    <h3>Upload directly from Eclipse</h3>
+
+    <p>The Ardlang code can be uploaded to the board directly from Eclipse.</p>
+
+    <img alt="Upload button in Eclipse" src="upload.png" />
+
+
+    <h3>Easily print to computer over USB cable</h3>
+
+    <p>With the print statement it is very easy to send strings and integers over the USB-cable to the computer. With a provided python file these messages can be received.
+
+    <img alt="Printing over USB" src="print.png" />
+    
+    
+    <h3>Events</h3>
+
+    <p>With event blocks its possible to call these blocks from a computer. The board will listen once in a while for a message and will execute the corresponding code block. It will buffer received messages if another event block is still running from a previous call.</p>
+     
+    <img alt="Event" src="event.png" />
+    <img alt="Initiating event" src="send.png" />
+
+    <h3>Pulse-width modulation</h3>
+
+    <p>Pulse-width modulation can be directly accessed by using percentages. When setting a pin at 10% the pin will be high 10% of the time. Can for example also be used to control the speed of motors.
+
+    <img alt="Fading with pulse-width modulation" src="fade.png" />
+
+    <h3>External functions</h3>
+
+    <p> With the external functions configuration blocks the user can call most of the functions provided by the C standard library and the Arduino library. The user can also define its own C functions in the file user_functions.h . This way its possible to do everything the Arduino is capable of, even if the Ardlang language is not feature complete.</p>
+
+    <img alt="External functions" src="external.png" />
+    <img alt="External " src="user_functions.png" />
 
     <h2>Download</h2>
     <p>
       You can download this project in either
-      <a href="http://github.com/nielsegberts/Ardlang/zipball/master">zip</a> or
-      <a href="http://github.com/nielsegberts/Ardlang/tarball/master">tar</a> formats.
+      <a alt="Download zip" href="http://github.com/nielsegberts/Ardlang/zipball/master">zip</a> or
+      <a alt="Downlaod tarball" href="http://github.com/nielsegberts/Ardlang/tarball/master">tar</a> formats.
     </p>
     <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
       by running:
