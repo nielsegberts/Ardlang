@@ -1,0 +1,18 @@
+pin configuration:
+	input button 10
+	
+globals:
+	var last = low
+	var count = 0
+
+repeat:
+	var value = read button
+	if (value == high && last == low):
+		count = count + 1
+		print "Number of times button pressed: " ++ count
+		last = high
+	if (value == low && last == high):
+		last = low
+	
+	
+

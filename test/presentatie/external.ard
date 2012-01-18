@@ -1,0 +1,20 @@
+pin configuration:
+	output pin2 2
+	output pin3 3
+	output pin4 4 
+	output pin5 5
+	output pin6 6
+	output pin7 7
+	output pin8 8
+	output pin9 9
+
+external functions:
+	randomLed
+	randomState
+
+repeat:
+	set randomLed randomState
+	wait 50ms
+
+
+

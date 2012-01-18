@@ -1,0 +1,36 @@
+pin configuration:
+	output led1 2
+	output led2 3
+	output led3 4
+	output led4 5
+	output led5 6
+	output led6 7
+	output led7 8
+	output led8 9
+ 
+aliases:
+	alias ledbar (led1 led2 led3 led4 led5 led6 led7 led8):
+		state even (high low high low high low high low)
+		state odd (high low high low high low high low)
+		
+		state left (high high high high low low low low)
+		state right (low low low low high high high high)
+		
+
+/* Flashes for 4 seconds the odd 
+   and even leds on the ledbar */
+event "oddeven":
+	for i from 1 to 10:
+		switch ledbar odd
+		wait 200ms
+		switch ledbar even
+		wait 200ms
+	
+event "leftright":
+	for i from 1 to 10:	
+		switch ledbar left
+		wait 200ms
+		switch ledbar right
+		wait 200ms
+		var bla = 5
+		
