@@ -3,15 +3,15 @@ module Ardlang-Folding
 //imports Ardlang-Folding.generated
 
 folding
- 
- Start.Program
-  PinconfigurationBlock.Pinconfigurations
-  AliasesBlock.Aliases
-  _.Alias
 
-  CodeBlock.Codes
-  Code.Code
-  Code.FuncDecl
-  // This file can be used for custom folding rules.
-  //
-  // See the imported file for a brief introduction and examples.
+	Start.Program
+	PinconfigurationBlock.Pinconfigurations
+	AliasesBlock.Aliases
+	_.Alias
+
+	CodeBlock.Codes
+	Code.Code
+	Code.FuncDecl
+	// This file can be used for custom folding rules.
+	//
+	// See the imported file for a brief introduction and examples.

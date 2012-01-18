@@ -3,14 +3,14 @@ module Ardlang-Outliner
 // imports Ardlang-Outliner.generated
 
 outliner
-  
-  // This file can be used for custom outliner rules.
-  //
-  // See the imported file for a brief introduction and examples.
-  
-  Alias.Alias
-  AliasState.AliasState
-  FuncCall.FuncCall
-  Statement.IfElse
-  Code.FuncDecl
-  PinValueList.PinValue
+
+	// This file can be used for custom outliner rules.
+	//
+	// See the imported file for a brief introduction and examples.
+
+	Alias.Alias
+	AliasState.AliasState
+	FuncCall.FuncCall
+	Statement.IfElse
+	Code.FuncDecl
+	PinValueList.PinValue

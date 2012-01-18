@@ -11,34 +11,34 @@ context-free syntax
 
 	Id							-> Exp {cons("FuncCallNoArgs")}
 	Int							-> Exp {cons("Int")}
-    PinValue					-> Exp
-    "(" Exp ")"					-> Exp {bracket}
-    "(" FuncCall ")"			-> Exp {bracket}
-    Exp "+" Exp					-> Exp {cons("Plus"),left}
-    Exp "-" Exp					-> Exp {cons("Minus"),left}
-    Exp "&&" Exp				-> Exp {cons("And")}
-    Exp "||" Exp				-> Exp {cons("Or")}
-    Exp "<" Exp					-> Exp {non-assoc, cons("LT")}
-    Exp ">" Exp					-> Exp {non-assoc, cons("GT")}
-    Exp "<=" Exp				-> Exp {non-assoc, cons("LTE")}
-    Exp ">=" Exp				-> Exp {non-assoc, cons("GTE")}
-    Exp "==" Exp				-> Exp {non-assoc, cons("EQ")}
-    Exp "!=" Exp				-> Exp {non-assoc, cons("NEQ")}
-    Exp "*" Exp					-> Exp {cons("Times"),left}
-    Exp "/" Exp					-> Exp {cons("Divide"),left}
-    Bool						-> Exp {prefer,cons("Bool")}
-	
+	PinValue					-> Exp
+	"(" Exp ")"					-> Exp {bracket}
+	"(" FuncCall ")"			-> Exp {bracket}
+	Exp "+" Exp					-> Exp {cons("Plus"),left}
+	Exp "-" Exp					-> Exp {cons("Minus"),left}
+	Exp "&&" Exp				-> Exp {cons("And")}
+	Exp "||" Exp				-> Exp {cons("Or")}
+	Exp "<" Exp					-> Exp {non-assoc, cons("LT")}
+	Exp ">" Exp					-> Exp {non-assoc, cons("GT")}
+	Exp "<=" Exp				-> Exp {non-assoc, cons("LTE")}
+	Exp ">=" Exp				-> Exp {non-assoc, cons("GTE")}
+	Exp "==" Exp				-> Exp {non-assoc, cons("EQ")}
+	Exp "!=" Exp				-> Exp {non-assoc, cons("NEQ")}
+	Exp "*" Exp					-> Exp {cons("Times"),left}
+	Exp "/" Exp					-> Exp {cons("Divide"),left}
+	Bool						-> Exp {prefer,cons("Bool")}
+
 	"!" Exp						-> Exp {cons("Not")}
-	
-    Time						-> Exp {cons("Time")}
-    Exp "%"						-> Exp {cons("PWM")}
-    
-    %%"digital read" Exp			-> Exp {cons("DigitalRead")}
-    %%"analog read" Exp			-> Exp {cons("AnalogRead")}
-	
+
+	Time						-> Exp {cons("Time")}
+	Exp "%"						-> Exp {cons("PWM")}
+
+	%%"digital read" Exp			-> Exp {cons("DigitalRead")}
+	%%"analog read" Exp			-> Exp {cons("AnalogRead")}
+
 	%% FuncCall without arguments is a variable
 	%%Id							-> Exp {cons("Var")}
-	
+
 context-free priorities
 	{
 		Exp "%"						-> Exp
@@ -51,14 +51,14 @@ context-free priorities
 		Exp "+" Exp					-> Exp
 		Exp "-" Exp					-> Exp
 	} > { non-assoc:
-    	Exp "<" Exp					-> Exp 
-    	Exp ">" Exp					-> Exp
-    	Exp "<=" Exp				-> Exp
-    	Exp ">=" Exp				-> Exp
-    	Exp "==" Exp				-> Exp 
-    	Exp "!=" Exp				-> Exp 
+		Exp "<" Exp					-> Exp
+		Exp ">" Exp					-> Exp
+		Exp "<=" Exp				-> Exp
+		Exp ">=" Exp				-> Exp
+		Exp "==" Exp				-> Exp
+		Exp "!=" Exp				-> Exp
 	} > {
 		Exp "&&" Exp				-> Exp {cons("And")}
-	} > {	
+	} > {
 		Exp "||" Exp				-> Exp {cons("Or")}
 	}

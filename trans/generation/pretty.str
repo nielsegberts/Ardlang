@@ -1,19 +1,19 @@
 module generation/pretty
 
 imports
-	
+
 	ardlang
 	signatures
 	generation/csignature
-    libstratego-gpp
+	libstratego-gpp
 
-	
+
 strategies
 
-pretty-all = pretty-ast2abox 
+pretty-all = pretty-ast2abox
 
 // Using the pretty print table provided by stratego
 
 pretty-ast2abox =
-    ast2abox(|[<import-term(include/C-pretty.pp.af)>]);
-    box2text-string(|100)
+	ast2abox(|[<import-term(include/C-pretty.pp.af)>]);
+	box2text-string(|100)

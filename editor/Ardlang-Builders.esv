@@ -4,27 +4,27 @@ module Ardlang-Builders
 imports Ardlang-Builders.generated
 
 builders
-                                                                      
-  // This file can be used for custom analysis and builder rules.     
-  //                                                                  
-  // See the imported file for a brief introduction and examples.     
+
+// This file can be used for custom analysis and builder rules.
+//
+// See the imported file for a brief introduction and examples.
 
 builders
-                                                                                                                               
-  provider                  : include/ardlang.ctree                                                                            
-  provider                  : include/ardlang-java.jar                                                                         
-                                                                                                                               
-  observer                  : editor-analyze                                                                                   
-                                                                                                                                                  
-  builder                   : "Show abstract syntax (for selection)" = generate-aterm (openeditor) (realtime) (meta) (source)
-  builder					: "Desugar" = desugar-aterm (openeditor) (realtime) (meta) (source)
-  builder					: "Rename" = rename-aterm (openeditor) (realtime) (meta)
-  builder					: "Map" = map-aterm (openeditor) (realtime) (meta)
-  builder					: "Typeanalysis" = typeanalysis-aterm (openeditor) (realtime) (meta)
-  builder					: "Evaluate" = eval-aterm (openeditor) (realtime) (meta) (source)
-  builder					: "CAterm" = c-aterm (openeditor) (realtime) (meta) (source)
-  builder					: "Code" = c-code (openeditor) (realtime) (meta) (source)
-  builder					: "Compile" = compile (openeditor) (realtime) (meta) (source)
-  builder					: "Upload" = upload (openeditor) (realtime) (meta) (source)    
-                                                                                                                               
-  // on save: generate-java                                                                                   
+
+	provider                  : include/ardlang.ctree
+	provider                  : include/ardlang-java.jar
+
+	observer                  : editor-analyze
+
+	builder                   : "Show abstract syntax (for selection)" = generate-aterm (openeditor) (realtime) (meta) (source)
+	builder					: "Desugar" = desugar-aterm (openeditor) (realtime) (meta) (source)
+	builder					: "Rename" = rename-aterm (openeditor) (realtime) (meta)
+	builder					: "Map" = map-aterm (openeditor) (realtime) (meta)
+	builder					: "Typeanalysis" = typeanalysis-aterm (openeditor) (realtime) (meta)
+	builder					: "Evaluate" = eval-aterm (openeditor) (realtime) (meta) (source)
+	builder					: "CAterm" = c-aterm (openeditor) (realtime) (meta) (source)
+	builder					: "Code" = c-code (openeditor) (realtime) (meta) (source)
+	builder					: "Compile" = compile (openeditor) (realtime) (meta) (source)
+	builder					: "Upload" = upload (openeditor) (realtime) (meta) (source)
+
+	// on save: generate-java

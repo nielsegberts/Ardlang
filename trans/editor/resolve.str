@@ -1,14 +1,14 @@
 module resolve
 
 imports
-  libstratego-lib
-  include/Ardlang
-  lib/editor-common.generated
-  signatures
-  namespaces
-  namespacelib
-  project
-  ardlang
+	libstratego-lib
+	include/Ardlang
+	lib/editor-common.generated
+	signatures
+	namespaces
+	namespacelib
+	project
+	ardlang
 
 rules
 
@@ -16,38 +16,38 @@ rules
 		where
 			<resolve> node => elem
 
-rules	  
+rules
 
 // Pins & vars are both stored in Vars namespace.
 resolve : PinRef(name) -> pin-name
-	where 
+	where
 		<get-declaration(|Pins())> name => pin-dec;
 		<project-pinname>pin-dec =>pin-name
-		
+
 resolve : VarRef(name) -> var-name
 	where
 		<get-declaration(|Vars())> name => var-dec;
 		<project-varname>var-dec => var-name
 
 resolve : AliasRef(name) -> aliasname
-	where 
+	where
 		<get-declaration(|Aliases())> name => decl;
 		<project-aliasname> decl => aliasname
-	
-	
-	
+
+
+
 resolve : AliasStateRef(AliasRef(alias), state) -> statename
-	where 
+	where
 		<get-declaration(|States(alias))> state => decl;
 		<project-statename> decl => statename
-	
-	
+
+
 resolve : FuncCallNoArgs(name) -> funcname
-	where 
+	where
 		<get-declaration(|Functions())> name => decl;
-		<project-func-name> decl => funcname	
-		
+		<project-func-name> decl => funcname
+
 resolve : FuncCall(name,args) -> funcname
-	where 
+	where
 		<get-declaration(|Functions())> name => decl;
 		<project-func-name> decl => funcname

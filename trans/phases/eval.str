@@ -4,24 +4,24 @@ imports
 	include/Ardlang
 	signatures
 	project
-	
+
 strategies
 	eval-all =  innermost(eval); topdown(try(flatten-switch))
-	
+
 rules // Evaluate units
 	flatten-switch: term -> <flatten-list> term
-	
+
 	//
 	// Time units
 	//
 	eval: Time(x) -> Int(value)
 	where
 		<time-unit> x => value
-	
+
 	//
 	// PWM
 	//
-	eval: PWM(percentage) -> Plus(Int("2"), Divide(Times(percentage, Int("250")), Int("100")))	
+	eval: PWM(percentage) -> Plus(Int("2"), Divide(Times(percentage, Int("250")), Int("100")))
 
 	//
 	// Analog pins
@@ -41,13 +41,13 @@ rules // Evaluate units
 			<project-pinrefs><get-alias>alias => pinrefs;
 			<project-pinvalues><get-state> (alias,state) => pinvalues;
 			<map(create-set)><zip>(pinrefs,pinvalues) => stats
-		
-		
+
+
 	create-set: (ref,value) -> FuncCall("set",[ref,value])
-	
+
 	//
 	// succeeds if the term is a valid time (value + 'ms'/'s'/'min'/'h') and returns the corresponding time in ms
-	time-unit: 
+	time-unit:
 		x -> value'
 		where (
 			<split-before> (x, "ms") => y;
@@ -55,7 +55,7 @@ rules // Evaluate units
 			<Fst> y => value;
 			<mulS> (value, "1") => value'
 		)
-	time-unit: 
+	time-unit:
 		x -> value'
 		where (
 			<split-before> (x, "s") => y;
@@ -63,7 +63,7 @@ rules // Evaluate units
 			<Fst> y => value;
 			<mulS> (value, "1000") => value'
 		)
-	time-unit: 
+	time-unit:
 		x -> value'
 		where (
 			<split-before> (x, "min") => y;
@@ -71,17 +71,16 @@ rules // Evaluate units
 			<Fst> y => value;
 			<mulS> (value, "60000") => value'
 		)
-	time-unit: 
+	time-unit:
 		x -> value'
 		where (
 			<split-before> (x, "h") => y;
 			<eq> (<Snd> y, "h");
 			<Fst> y => value;
-			<mulS> (value, "3600000") => value'
-		)		
-		
-	
-	
+				<mulS> (value, "3600000") => value'
+		)
 
- 	 
- 	 
+
+
+
+

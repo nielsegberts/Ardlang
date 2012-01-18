@@ -2,11 +2,11 @@ module lexical/Ardlang-Constants
 
 exports
 	sorts Int
-	
+
 	lexical syntax
-		
+
 		[\-]?[0-9]+					-> Int
 
 	lexical restrictions
 
-		Int -/- [a-zA-Z0-9\_]    
+		Int -/- [a-zA-Z0-9\_]

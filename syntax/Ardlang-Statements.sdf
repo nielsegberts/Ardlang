@@ -4,37 +4,37 @@ imports
 	%%Ardlang
 	%%Common
 	Ardlang-Expressions
-	
+
 
 exports
 	sorts Statement
 
 context-free syntax
-	
+
 	FuncCall						-> Statement
 	Exp								-> Statement
-    VarRef "=" Exp					-> Statement {cons("Assignment")}
-    VarRef "=" FuncCall				-> Statement {cons("Assignment")}
+	VarRef "=" Exp					-> Statement {cons("Assignment")}
+	VarRef "=" FuncCall				-> Statement {cons("Assignment")}
 	"return" Exp					-> Statement {cons("Return")}
-	
+
 	"var" Id						-> GlobalVar {cons("VarDecl")}
 	"var" Id "=" Exp				-> GlobalVar {cons("VarDecl")}
-	
+
 	"var" Id						-> Statement {cons("VarDecl")}
 	"var" Id "=" Exp				-> Statement {cons("VarDecl")}
-    "var" Id "=" FuncCall			-> Statement {cons("VarDecl")}
-	
+	"var" Id "=" FuncCall			-> Statement {cons("VarDecl")}
+
 	Id								-> VarDecl{cons("VarDecl")}
-		
+
 	%%Id							-> FuncCall {cons("Var")}
 	Id Exp+							-> FuncCall {cons("FuncCall")}
-	
+
 	"if" Exp ":" 					-> Statement {cons("If")}
 	"else" ":" 						-> Statement {cons("Else")}
 	"while" Exp ":"					-> Statement {cons("While")}
 	"for" Id "from" Exp "to" Exp ":"-> Statement {cons("For")}
 	"for" Id "from" Exp "to" Exp "step" Exp ":"-> Statement {cons("For")}
-	
+
 	"print" {Output "++"}*			-> Statement {cons("Print"), prefer}
 	"extern" Statement				-> Statement {cons("Extern")}
 	"\"" String "\""				-> Output {cons("String")}

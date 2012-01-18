@@ -1,12 +1,12 @@
 module analysis/rename
 
-imports 
+imports
 	include/Ardlang
 	namespaces
 	namespacelib
 	signatures
 
-strategies	
+strategies
 
 rename-all = alltd(rename)
 
@@ -16,15 +16,15 @@ rules
 
 	// Rename program
 	rename:
-	 Program(pinconfig, aliases, globals, externals, codes) 
-			 -> Program(pinconfig' , aliases' ,globals', externals, codes') 
-		 where new-scope(
-			 <rename-all> pinconfig => pinconfig';
-			 <rename-all> aliases => aliases';
-			 <rename-all> globals => globals';
-		  	 <rename-all> codes => codes'
-		 ) 
-	
+	Program(pinconfig, aliases, globals, externals, codes)
+			-> Program(pinconfig' , aliases' ,globals', externals, codes')
+		where new-scope(
+			<rename-all> pinconfig => pinconfig';
+			<rename-all> aliases => aliases';
+			<rename-all> globals => globals';
+			<rename-all> codes => codes'
+		)
+
 	// Rename code blocks
 	// Scoping is disabled as it hides declarations outside the scope
 	// And thus it constantly overwrites the variables in outer scopes, which is wrong
@@ -33,13 +33,13 @@ rules
 			<rename-declaration(|Codes())> <newname> "repeat" => uniquename;
 			<rename-all> statements => statements'
 		)
-		
+
 	rename: DoOnce(statements) -> DoOnce(uniquename, statements')
 		where new-scope(
 			<rename-declaration(|Codes())> <newname> "doonce" => uniquename;
 			<rename-all> statements => statements'
 		)
-		
+
 	rename: FuncDecl(name, args, statements) -> FuncDecl(name, args', statements')
 		where new-scope(
 			<map(rename-args)> args => args';
@@ -54,18 +54,18 @@ rules
 				<rename-all> statements => statements'
 			)
 		)
-		
+
 	rename: IfElse(cond, ifStatements, elseStatements) -> IfElse(cond', ifStatements', elseStatements')
 		where (
-			<rename-all> cond => cond'; 
+			<rename-all> cond => cond';
 			new-scope(
 				<rename-all> ifStatements => ifStatements'
 			);
 			new-scope(
 				<rename-all> elseStatements => elseStatements'
 			)
-		)	
-		
+		)
+
 	rename: For(index, from, to, step, statements) -> For(index', from', to', step', statements')
 		where (
 			<rename-all> from => from';
@@ -76,7 +76,7 @@ rules
 				<rename-all> statements => statements'
 			)
 		)
-		
+
 	rename: While(cond, statements) -> While(cond', statements')
 		where (
 			<rename-all> cond => cond';
@@ -84,16 +84,16 @@ rules
 				<rename-all> statements => statements'
 			)
 		)
-	 
+
 	rename-args: ParamDecl(name) -> ParamDecl(name')
 		where
 			<rename-declaration(|Vars())> name => name'
-			
+
 	rename: PinName(name) -> PinName(name')
 		where
 			<rename-declaration(|Vars())> name => name';
 			<store-proposal-candidates(|Vars())> name'
-			
+
 	rename: VarRef(name) -> VarRef(name')
 		where
 			<rename-reference(|Vars())> name => name'
@@ -103,7 +103,7 @@ rules
 			<rename-reference(|Vars())> name => name'
 
 	/*// First occurence of var
-	rename: Configuration(Mode(mode), PinName(name), number) -> Configuration(Mode(mode), PinName(name'), number) 
+	rename: Configuration(Mode(mode), PinName(name), number) -> Configuration(Mode(mode), PinName(name'), number)
 		where
 			<rename-declaration(|Vars())> name => name'
 	*/
@@ -118,8 +118,8 @@ rules
 		where
 			<rename-all> exp => exp';
 			<rename-reference(|Vars())> name => name'
-	
-	
+
+
 	rename: FuncCallNoArgs(name) -> VarRef(name')
 		where
 			<rename-reference(|Vars())> name => name'

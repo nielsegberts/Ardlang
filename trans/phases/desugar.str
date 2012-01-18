@@ -5,12 +5,12 @@ imports
 	signatures
 	project
 
-strategies 
+strategies
 	desugar-all =  topdown(try(removeEmptylines); topdown(try(default-for-step))); desugar-indentation; innermost(desugar);topdown(try(glue-alias-and-state));innermost((desugar-for))
 	desugar-indentation = alltd(prepare-indentation); topdown(try(indent-cond-stmts)); topdown(try(combine-ifelse)); topdown(try(verify-indent)); topdown(try(remove-correct-indents))
-	
+
 rules
-		
+
 	//
 	// Remove empty lines.
 	//
@@ -18,11 +18,11 @@ rules
 	where (
 		<remove-all(?Emptyline(_))> list => list'
 	)
-	// 
+	//
 	// If no step value is given for the for, assume this is equal to 1
 	//
 	default-for-step: For(i, a, b) -> For(i, a, b, Int("1"))
-	
+
 	//
 	// Create an empty (statement) list for each conditional statement.
 	//
@@ -48,7 +48,7 @@ rules
 			<get-line-indentation> statement => indentation;
 			<get-line-indentation> x => next_line_indentation;
 			not ( <string-gt> (next_line_indentation, indentation) ) + not ( <is-conditional-statement> statement )
-		)	
+		)
 	indent-cond-stmts: [x|xs] -> [x]
 		where (
 			<eq> (xs, [])
@@ -81,7 +81,7 @@ rules
 		where <conc> (lines, [line]) => lines'
 	combine-lines: (Line(indentation, For(i, a, b, incr, lines)), line) -> Line(indentation, For(i, a, b, incr, lines'))
 		where <conc> (lines, [line]) => lines'
-		
+
 	//
 	// Create an IfElse constructors out of If + Else constructors.
 	//
@@ -94,14 +94,14 @@ rules
 			<eq> (xs, [])
 		)
 	combine-ifelse: [] -> [] // For empty if/else blocks
-	
+
 	//
-	// Verify whether the indentation is correct. If a line of code has wrong indentation, it will contain the WrongIndent() constructor afterwards. 
+	// Verify whether the indentation is correct. If a line of code has wrong indentation, it will contain the WrongIndent() constructor afterwards.
 	//
-	verify-indent(|indent): Line(line_indent, statement) -> Line(WrongIndent(), statement) 
+	verify-indent(|indent): Line(line_indent, statement) -> Line(WrongIndent(), statement)
 		where not (
 			<eq> (<conc-strings> (indent, "\t"), line_indent)
-		)	
+		)
 	// For repeat and do-once code blocks:
 	verify-indent: Code(x, lines) -> Code(x, lines')
 		where (
@@ -111,27 +111,27 @@ rules
 	verify-indent: FuncDecl(x, name, args, lines) -> FuncDecl(x, name, args, lines')
 		where (
 			<map(try(verify-indent(|"\n")))> lines => lines'
-		)	
-		
+		)
+
 	// For IfElse code blocks:
-	verify-indent: Line(ifelse_indent, IfElse(exp, ifStatements, elseStatements)) -> Line(ifelse_indent, IfElse(exp, ifStatements', elseStatements')) 
+	verify-indent: Line(ifelse_indent, IfElse(exp, ifStatements, elseStatements)) -> Line(ifelse_indent, IfElse(exp, ifStatements', elseStatements'))
 		where (
 			<map(try(verify-indent(|ifelse_indent)))> ifStatements => ifStatements';
 			<map(try(verify-indent(|ifelse_indent)))> elseStatements => elseStatements'
 		)
 	// For If code blocks:
-	verify-indent: Line(if_indent, If(exp, statements)) -> Line(if_indent, If(exp, statements')) 
+	verify-indent: Line(if_indent, If(exp, statements)) -> Line(if_indent, If(exp, statements'))
 		where (
-			
+
 			<map(try(verify-indent(|if_indent)))> statements => statements'
-		)	
+		)
 	// For While code blocks:
-	verify-indent: Line(while_indent, While(exp, statements)) -> Line(while_indent, While(exp, statements')) 
+	verify-indent: Line(while_indent, While(exp, statements)) -> Line(while_indent, While(exp, statements'))
 		where (
 			<map(try(verify-indent(|while_indent)))> statements => statements'
 		)
 	// For For code blocks:
-	verify-indent: Line(for_indent, For(i, a, b, incr, statements)) -> Line(for_indent, For(i, a, b, incr, statements')) 
+	verify-indent: Line(for_indent, For(i, a, b, incr, statements)) -> Line(for_indent, For(i, a, b, incr, statements'))
 		where (
 			<map(try(verify-indent(|for_indent)))> statements => statements'
 		)
@@ -141,7 +141,7 @@ rules
 	//
 	remove-correct-indents: Line(indent, statement) -> statement
 		where <is-string> indent
-		
+
 	//
 	// Removing cruft
 	//
@@ -149,7 +149,7 @@ rules
 	desugar: Pinconfigurations(_,configurations) -> Pinconfigurations(configurations)
 	desugar: Globals(_, vars) -> Globals(vars)
 	desugar: PinDef(indent, type, pin, number, _) -> Configuration(type, pin, number)
-		where <eq> (indent, "\n\t") 
+		where <eq> (indent, "\n\t")
 	desugar: Global(indent, VarDecl(name,value), _) -> VarDecl(name,value)
 		where <eq> (indent, "\n\t")
 	desugar: External(indent, name, _) -> External(name)
@@ -164,108 +164,107 @@ rules
 	desugar: Code(Event(name), statements) -> Event(name, statements)
 	desugar: FuncDecl(indent, name, args, statements) -> FuncDecl(name, args, statements)
 		where <eq> (indent, "\n")
-	
+
 	// desugar: If (cond,s) -> IfElse(cond,s,[])
-	
-	// 
+
+	//
 	// Evaluate math functions (moved to desugar phase so that "set pin1 5-3" gives an error (this is not 0 or 1)
-	// 
+	//
 	desugar: Times(Int(x),Int(y)) -> Int(z)
- 	where <mulS> (x,y) => z
- 	 
- 	desugar: Plus(Int(x), Int(y)) -> Int(z)
- 	where <addS> (x, y) => z
- 	 
- 	desugar: Minus(Int(x),Int(y)) -> Int(z)
- 	where <subtS> (x,y) => z
- 	 
- 	desugar: Divide(Int(x),Int(y)) -> Int(z)
- 	where <divS> (x,y) => z
-	
-	
+	where <mulS> (x,y) => z
+
+	desugar: Plus(Int(x), Int(y)) -> Int(z)
+	where <addS> (x, y) => z
+
+	desugar: Minus(Int(x),Int(y)) -> Int(z)
+	where <subtS> (x,y) => z
+
+	desugar: Divide(Int(x),Int(y)) -> Int(z)
+	where <divS> (x,y) => z
+
+
 	// To detect unreachable code
-	
- 	 
-	 desugar: LT(Int(x),Int(y)) -> Bool("true")
- 	 where <ltS> (x,y)
- 	 
- 	 desugar: LT(Int(x),Int(y)) -> Bool("false")
- 	 where not (<ltS> (x,y))
- 	 
- 	 desugar: LTE(Int(x),Int(y)) -> Bool("true")
- 	 where <leqS> (x,y)
- 	 
- 	 desugar: LTE(Int(x),Int(y)) -> Bool("false")
- 	 where not (<leqS> (x,<inc>y))
- 	 
- 	 
-	 desugar: GT(Int(x),Int(y)) -> Bool("true")
- 	 where <gtS> (x,y)
- 	 
- 	 desugar: GT(Int(x),Int(y)) -> Bool("false")
- 	 where not (<gtS> (x,y))
- 	 
- 	 desugar: GTE(Int(x),Int(y)) -> Bool("true")
- 	 where <geqS> (x,y)
- 	 
- 	 desugar: GTE(Int(x),Int(y)) -> Bool("false")
- 	 where not (<geqS> (x,y))
- 	 
- 	 desugar: EQ(Int(x),Int(y)) -> Bool("true")
- 	 where <eq> (x,y)
- 	 
- 	 desugar: EQ(Int(x),Int(y)) -> Bool("false")
- 	 where not (<eq> (x,y))
- 	 
- 	 desugar: NEQ(Int(x),Int(y)) -> Bool("true")
- 	 where not (<eq> (x,y))
- 	 
- 	 desugar: NEQ(Int(x),Int(y)) -> Bool("false")
- 	 where <eq> (x,y)
-	
+
+
+	desugar: LT(Int(x),Int(y)) -> Bool("true")
+	where <ltS> (x,y)
+
+	desugar: LT(Int(x),Int(y)) -> Bool("false")
+	where not (<ltS> (x,y))
+
+	desugar: LTE(Int(x),Int(y)) -> Bool("true")
+	where <leqS> (x,y)
+
+	desugar: LTE(Int(x),Int(y)) -> Bool("false")
+	where not (<leqS> (x,<inc>y))
+
+
+	desugar: GT(Int(x),Int(y)) -> Bool("true")
+	where <gtS> (x,y)
+
+	desugar: GT(Int(x),Int(y)) -> Bool("false")
+	where not (<gtS> (x,y))
+
+	desugar: GTE(Int(x),Int(y)) -> Bool("true")
+	where <geqS> (x,y)
+
+	desugar: GTE(Int(x),Int(y)) -> Bool("false")
+	where not (<geqS> (x,y))
+
+	desugar: EQ(Int(x),Int(y)) -> Bool("true")
+	where <eq> (x,y)
+
+	desugar: EQ(Int(x),Int(y)) -> Bool("false")
+	where not (<eq> (x,y))
+
+	desugar: NEQ(Int(x),Int(y)) -> Bool("true")
+	where not (<eq> (x,y))
+
+	desugar: NEQ(Int(x),Int(y)) -> Bool("false")
+	where <eq> (x,y)
+
 	desugar: And(e1,e2) -> Bool("true")
- 	 where 
- 	 	<evals-as-true> e1;
- 	 	<evals-as-true> e2
- 	 	
- 	 desugar: And(e1,_) -> Bool("false")
- 	 where 
- 	 	<evals-as-false> e1
- 	 
- 	 desugar: And(_,e2) -> Bool("false")
- 	 where 
- 	 	<evals-as-false> e2
-	
+	where
+		<evals-as-true> e1;
+		<evals-as-true> e2
+
+	desugar: And(e1,_) -> Bool("false")
+	where
+		<evals-as-false> e1
+
+	desugar: And(_,e2) -> Bool("false")
+	where
+		<evals-as-false> e2
+
 	desugar: Or(e1,_) -> Bool("true")
- 	 where 
- 	 	<evals-as-true> e1
- 	 
- 	 desugar: Or(_,e2) -> Bool("true")
- 	 where 
- 	 	<evals-as-true> e2
- 	 	
- 	 desugar: Or(e1,e2) -> Bool("false")
- 	 where 
- 	 	<evals-as-false> e1;
- 	 	<evals-as-false> e2
- 	 	
- 	 desugar: amb(_) -> ambParams()
-	
+	where
+		<evals-as-true> e1
+
+	desugar: Or(_,e2) -> Bool("true")
+	where
+		<evals-as-true> e2
+
+	desugar: Or(e1,e2) -> Bool("false")
+	where
+		<evals-as-false> e1;
+		<evals-as-false> e2
+
+	desugar: amb(_) -> ambParams()
+
 	//desugar: VarDecl(varname) -> VarDecl(varname,Int("0"))
-	// 
+	//
 	// Init for loops at the correct value
-	// 
+	//
 	desugar-for: For(VarDecl(varname), Int(start), Int(stop), stats) -> For(varname, Int(start), Int(stop),stats)
 	desugar-for: For(VarDecl(varname), Int(start), Int(stop), Int(step), stats) -> For(varname, Int(start), Int(stop), Int(step),stats)
-	
-	
+
+
 	// This is to desugar the aliasname to the statename
-	// This is done to make the statename unique   
-	glue-alias-and-state: 
+	// This is done to make the statename unique
+	glue-alias-and-state:
 		Alias(AliasName(name), pinrefs, states) -> Alias(AliasName(name),pinrefs,states')
 		where <innermost(glue-alias-and-state2(|name))> states => states'
-	
-	glue-alias-and-state2(|aliasname) : 
-		AliasState (StateName(statename), pinvaluelist) -> AliasState		( StateName(aliasname,statename), pinvaluelist) 
 
- 
+	glue-alias-and-state2(|aliasname) :
+		AliasState (StateName(statename), pinvaluelist) -> AliasState		( StateName(aliasname,statename), pinvaluelist)
+

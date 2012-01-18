@@ -3,13 +3,13 @@ Perform checks for:
 == PINS ==
 
 DONE - duplicate pin number declarations  - does not work with A0-A5
-DONE - duplicate pin name declarations 
-DONE - undeclared pins 									
+DONE - duplicate pin name declarations
+DONE - undeclared pins
 DONE - unrefered pins (Notice)
 
 == ALIASES ==
 
-DONE - undeclared aliases								
+DONE - undeclared aliases
 DONE - undeclared statename in corresponding alias
 DONE - different pincount/valuecount
 DONE - same state pinvalues

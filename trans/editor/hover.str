@@ -1,67 +1,66 @@
 module hover
 
 imports
-  libstratego-lib
-  include/Ardlang
-  lib/editor-common.generated
-  signatures
-  namespaces
-  namespacelib
+	libstratego-lib
+	include/Ardlang
+	lib/editor-common.generated
+	signatures
+	namespaces
+	namespacelib
 project
 
-rules	  
+rules
 
-	      
+
 	editor-hover: 	(node, position, ast, path, project-path) -> hover-msg
 		where
-			<hover>node => hover-msg	
-	
-	hover: PinName(n) -> $[Pin: number=[nr] 
-	 mode=[mode]]
-		where 
+			<hover>node => hover-msg
+
+	hover: PinName(n) -> $[Pin: number=[nr]
+	mode=[mode]]
+		where
 			<get-pin>n => pin-decl;
 			<project-pinmode>pin-decl => mode;
 			<project-pinnr>pin-decl => nr
-	
-	
-	hover: PinRef(n) -> $[Pin: number=[nr] 
-	 mode=[mode]]
-		where 
+
+
+	hover: PinRef(n) -> $[Pin: number=[nr]
+	mode=[mode]]
+		where
 			<get-pin>n => pin-decl;
 			<project-pinmode>pin-decl => mode;
 			<project-pinnr>pin-decl => nr
-			     
-			     
-	hover: 	VarRef(n) -> $[Var: name=[n] 
-	 initial value=[initval]]
-		where 
+
+
+	hover: 	VarRef(n) -> $[Var: name=[n]
+	initial value=[initval]]
+		where
 			<get-var>n => var-decl;
 			<project-varinitval>var-decl => initval
 
-	    
+
 	hover: 	PinValue(v) -> $[Pin value: [v]]
-	
+
 	hover: 	ParamDecl(n) -> $[Parameter: [n]]
-	
+
 	hover: 	FuncCall(n,a) -> $[Function: "[n]" args: [args-count]]
 		where
 			<get-function>n => func;
 			<length><project-func-params>func => args-count
-		
+
 	hover: 	FuncCall("set",a) -> "Set function 'set [pinref] [pinvalue]' assigns a pin a value"
 	hover: 	FuncCall("write",a) -> "Write function 'write [pinref] [pinvalue]' writes an analog PWM value to a pin"
 	hover: 	FuncCall("get",a) -> "Get function 'get [pinref]' gets a pre-setted value from a pin"
 
-	      
+
 	hover: 	FuncCall("wait",a) -> "Wait function \"wait [int]['s'|'ms']\" lets the execution of the program wait the specified time before continuing"
 
 	hover: FuncCallNoArgs(name)	-> $[Function call]
 	hover: FuncCall(name,params) -> $[Function call]
-	
+
 	hover: AliasStateRef(AliasRef(alias), state) -> $[State values:]
 		where
 			<get-state>(alias,state) => state-dec;
 			<concat-strings><map(project-pinvalue-value)><project-pinvalues>state-dec => values
-	
-	      
-	      
+
+

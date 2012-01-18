@@ -1,25 +1,25 @@
 module lexical/Ardlang-Identifiers
 exports
 	sorts Id String Time
-	
+
 lexical syntax
 	[a-zA-Z][a-zA-Z0-9\_]*	-> Id
 	~[\"]*	-> String
 	[0-9]+[a-z]+ -> Time
-	
+
 lexical restrictions
 	Id -/- [a-zA-Z0-9\_]
 	"var" -/- [a-zA-Z0-9\_]
 	String -/- ~[\"]
 	Time -/- [a-zA-Z0-9\_]
-	
-	
+
+
 
 lexical syntax
-	
+
 	"true"			-> Id {reject}
 	"false"			-> Id {reject}
-	
+
 	"pin"			-> Id {reject}
 	"configuration"	-> Id {reject}
 	"globals"		-> Id {reject}
@@ -33,34 +33,34 @@ lexical syntax
 	"external"		-> Id {reject}
 	"functions"		-> Id {reject}
 	"switch"		-> Id {reject}
-	
+
 	"if"			-> Id {reject}
 	"else"			-> Id {reject}
 	"for"			-> Id {reject}
 	"while"			-> Id {reject}
-	
+
 	"A0"			-> Id {reject}
 	"A1"			-> Id {reject}
 	"A2"			-> Id {reject}
 	"A3"			-> Id {reject}
 	"A4"			-> Id {reject}
 	"A5"			-> Id {reject}
-	
+
 	"A0"			-> AnalogPin
-	"A1"			-> AnalogPin 
-	"A2"			-> AnalogPin 
-	"A3"			-> AnalogPin 
-	"A4"			-> AnalogPin 
-	"A5"			-> AnalogPin 
-	
+	"A1"			-> AnalogPin
+	"A2"			-> AnalogPin
+	"A3"			-> AnalogPin
+	"A4"			-> AnalogPin
+	"A5"			-> AnalogPin
+
 	%% "output" 		-> Id {reject}
 	%% "input" 		-> Id {reject}
-	
+
 	"low"			-> Id {reject}
 	"high"			-> Id {reject}
-	
+
 	"false"			-> Bool
 	"true"			-> Bool
 
-	"low"			-> PinValueId 
+	"low"			-> PinValueId
 	"high"			-> PinValueId

@@ -1,7 +1,7 @@
 module signatures
 
 imports
-  types
+	types
 
 signature constructors
 

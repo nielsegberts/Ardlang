@@ -3,26 +3,26 @@ module Ardlang-Colorer
 imports Ardlang-Colorer.generated
 
 colorer
-  _.AliasName: 248 128 23
-  _.AliasRef: 248 128 23   
-  
-  _.AliasStateRef: 14 94 90        
-  _.PinName: brown
-  _.PinRef: brown
-  _.StateName: 14 94 90
-  _.Mode : 127 0 85 bold 
-  _.ms: grey
-  
-  _.PinValue: 	16 32 255   bold
-  _.Bool: 		16 32 255   bold  
-  _.Bool: 		16 32 255   bold
-  
-  _.A0: 		255 0 0   	bold
-  _.A1: 		255 0 0   	bold
-  _.A2: 		255 0 0   	bold
-  _.A3: 		255 0 0   	bold
-  _.A4: 		255 0 0   	bold
-  _.A5: 		255 0 0   	bold                                        
-  // This file can be used for custom colorer rules.                  
-  //                                                                  
-  // See the imported file for a brief introduction and examples.     
+	_.AliasName: 248 128 23
+	_.AliasRef: 248 128 23
+
+	_.AliasStateRef: 14 94 90
+	_.PinName: brown
+	_.PinRef: brown
+	_.StateName: 14 94 90
+	_.Mode : 127 0 85 bold
+	_.ms: grey
+
+	_.PinValue: 	16 32 255   bold
+	_.Bool: 		16 32 255   bold
+	_.Bool: 		16 32 255   bold
+
+	_.A0: 		255 0 0   	bold
+	_.A1: 		255 0 0   	bold
+	_.A2: 		255 0 0   	bold
+	_.A3: 		255 0 0   	bold
+	_.A4: 		255 0 0   	bold
+	_.A5: 		255 0 0   	bold
+	// This file can be used for custom colorer rules.
+	//
+	// See the imported file for a brief introduction and examples.

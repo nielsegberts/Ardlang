@@ -1,101 +1,96 @@
 module check-indentation
 
 imports
-  libstratego-lib
-  include/Ardlang
-  lib/editor-common.generated
-  signatures
-  types
-  namespaces
-  namespacelib
-  project
-  analysis/typeanalysis
-  phases/eval
+	libstratego-lib
+	include/Ardlang
+	lib/editor-common.generated
+	signatures
+	types
+	namespaces
+	namespacelib
+	project
+	analysis/typeanalysis
+	phases/eval
 
-    
 rules // Bad indentation
-	
+
 	// Lines
 	constraint-error:
 		Line(WrongIndent(), e@statement) -> (e, $[Bad indentation])
-		
-		
-	/*	
+
+	/*
 	Created by WvK: to check for wrong initial indent, but has to be integrated in desugar phase
-	
-	constraint-error: 
+
+	constraint-error:
 		Program(indents,e@Pinconfigurations(_,_,_),_,_) -> (e, $[No initial tab allowed here])
 		where
 			<last>indents => lastindent;
 			<debug>lastindent;
 			<string-tokenize(|['\'])> lastindent => tok;
 			<debug>tok
-  */
- 	// External
- 	constraint-error:
- 		External(_, e@name, _) -> (e, $[Bad indentation (please use one tab here)])
- 
- 	// Alias
- 	constraint-error:
- 		Alias(indent, e@name, _, _, _) -> (e, $[Bad indentation (please use one tab here)])
- 
- 	// State
- 	constraint-error:
+	*/
+	// External
+	constraint-error:
+		External(_, e@name, _) -> (e, $[Bad indentation (please use one tab here)])
+
+	// Alias
+	constraint-error:
+		Alias(indent, e@name, _, _, _) -> (e, $[Bad indentation (please use one tab here)])
+
+	// State
+	constraint-error:
 		AliasState(indent, e@name, _, _)	-> (e, $[Bad indentation (please use two tabs here)])
- 	
- 	// PinDef
- 	constraint-error:
- 		PinDef(indent, e@mode, _, _, _) -> (e, $[Bad indentation (please use one tab here)])
- 	
- 	// Function declaration
- 	constraint-error:
- 		FuncDecl(indent, e@name, _, _) -> (e, $[Bad indentation (please don't indent this line)])
- 	
-  	// Globals
- 	constraint-error:
- 		Global(_, e@varDecl, _) -> (e, $[Bad indentation (please use one tab here)])
- 		
+
+	// PinDef
+	constraint-error:
+		PinDef(indent, e@mode, _, _, _) -> (e, $[Bad indentation (please use one tab here)])
+
+	// Function declaration
+	constraint-error:
+		FuncDecl(indent, e@name, _, _) -> (e, $[Bad indentation (please don't indent this line)])
+
+	// Globals
+	constraint-error:
+		Global(_, e@varDecl, _) -> (e, $[Bad indentation (please use one tab here)])
+
 rules // Misplaced conditional statements (if/ifElse/while/for)
-	
+
 	// Else without an If
 	constraint-error:
 		e@Else(_) -> (e, $[Can't use 'else' without an 'if' (or something is wrong with your indentation)])
 
 	// IfElse without statements under the 'if'
 	constraint-error:
-		e@IfElse(_, [], _) -> (e, $[There should be at least one statement under the 'if']) 
+		e@IfElse(_, [], _) -> (e, $[There should be at least one statement under the 'if'])
 
 	// IfElse without statements under the 'else'
 	constraint-error:
 		e@IfElse(_, _, []) -> (e, $[There should be at least one statement under the 'else'])
-		
+
 	// If without statements
 	constraint-error:
-		e@If(_, []) -> (e, $[There should be at least one statement under the 'if'])		
-		
+		e@If(_, []) -> (e, $[There should be at least one statement under the 'if'])
+
 	// While loop without statements
 	constraint-error:
-		e@While(_, []) -> (e, $[There should be at least one statement under the 'while'])		
-		
+		e@While(_, []) -> (e, $[There should be at least one statement under the 'while'])
+
 	// For loop without statements
 	constraint-error:
 		e@For(_, _, _, _, []) -> (e, $[There should be at least one statement under the 'for'])
-	
-	
+
+
 rules // PWM
 	constraint-error:
 		PWM(Int(e@value)) -> (e, $[Value should be in between 0% and 100%])
 		where <gtS> (value, "100")
-	
-		
+
 rules // Time
 	constraint-error:
 		Time(e@value) -> (e, $[Please use 'ms', 's', 'h' or 'min' as time unit])
 		where not ( <time-unit> value )
-		
-	
+
 rules // Analog and digital pins
 	constraint-error:
 		Configuration(Mode("output"), _, e@Ax) -> (e, $[Cannot use analog input [Ax] as output])
 		where <is-substring(!"A")> Ax
-		
