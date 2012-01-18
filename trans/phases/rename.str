@@ -96,12 +96,10 @@ rules
 			
 	rename: VarRef(name) -> VarRef(name')
 		where
-			//<debug>$[varref [name]];
 			<rename-reference(|Vars())> name => name'
 
 	rename: PinRef(name) -> PinRef(name')
 		where
-			//<debug>$[pinref [name]];
 			<rename-reference(|Vars())> name => name'
 
 	/*// First occurence of var

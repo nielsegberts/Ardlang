@@ -14,10 +14,7 @@ rules
 	      
 	editor-hover: 	(node, position, ast, path, project-path) -> hover-msg
 		where
-			// <debug>"Hover pre event";
-			// <debug>node;
-			<hover>node => hover-msg//;
-			// <debug>"Hover post event"	
+			<hover>node => hover-msg	
 	
 	hover: PinName(n) -> $[Pin: number=[nr] 
 	 mode=[mode]]
@@ -39,7 +36,6 @@ rules
 	 initial value=[initval]]
 		where 
 			<get-var>n => var-decl;
-			<debug>var-decl;
 			<project-varinitval>var-decl => initval
 
 	    

@@ -32,6 +32,7 @@ lexical syntax
 	"event"			-> Id {reject}
 	"external"		-> Id {reject}
 	"functions"		-> Id {reject}
+	"switch"		-> Id {reject}
 	
 	"if"			-> Id {reject}
 	"else"			-> Id {reject}

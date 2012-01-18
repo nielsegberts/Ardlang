@@ -26,14 +26,12 @@ rules // Constraint warnings & notes
 		where (
 			// NOT WORKING YET FOR A0-A5??
 			<gt>(<length><get-declarations(|PinNumbers())>number,1) 
-			// <debug><project-all-declarations(project-pinnr|Pins())>
 		)
 
   // Check for duplicate state values
   	constraint-warning: AliasState(StateName(alias,state),e@PinValueList(pinvalues))  -> (e, $[Another state has the exact same values])
   		where 
   		 	pinvalues-list := <get-all-declarations(|PinValues(alias))>;
-  			//<debug>pinvalues-list;
   			<remove-all(?pinvalues)>pinvalues-list => pinvalues-list-unique;
   			<gt>(<subt>(<length>pinvalues-list,<length>pinvalues-list-unique),1)
   				

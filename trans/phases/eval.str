@@ -21,7 +21,7 @@ rules // Evaluate units
 	//
 	// PWM
 	//
-	eval: PWM(percentage) -> Plus(Int("2"), Divide(Times(percentage, Int("255")), Int("100")))	
+	eval: PWM(percentage) -> Plus(Int("2"), Divide(Times(percentage, Int("250")), Int("100")))	
 
 	//
 	// Analog pins

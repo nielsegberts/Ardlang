@@ -61,7 +61,6 @@ rules // STORE DECLARATIONS
 	where
 		<store-declaration(|Pins())>(name, d);
 		<store-declaration(|PinNumbers())>(number, d)
-		//;<debug>$[Store pin: [name]]
 		 
 	store: d@For(index, _, _, _, _) -> d
 	where
@@ -80,13 +79,11 @@ rules // STORE REFERENCES
 		 
 	store-ref: d@PinRef(name) -> d
 	where
-		//<debug>"PinRef";<debug>name;
 		<store-reference(|Pins())> name
 		
 		
 	store-ref: d@VarRef(name) -> d
 	where
-		//<debug>"VarRef";<debug>name;
 		<store-reference(|Vars())> name
 		
 	store-ref: d@AliasRef(alias) -> d

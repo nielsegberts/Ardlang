@@ -249,7 +249,7 @@ rules
 	toc: If(condition, statements) -> If(
 										<toc> condition,
 										Compound([],
-											<map(toc)> statements
+											<map(toc-stat)> statements
 										)
 									  )
 	
@@ -269,11 +269,11 @@ rules
 	
 	lte-or-gte: (from,to,Int(step),index) -> LTE(VarRef(index), to)	
 		where
-			<lt>(step, 0)										
+			<gtS>(step,"0")										
 	
 	lte-or-gte: (from,to,Int(step),index) -> GTE(VarRef(index), to)	
 		where
-			<gt>(step,0)	
+			<ltS>(step,"0")	
 			
 	
 			
@@ -331,6 +331,9 @@ rules
 	toc: Bool(v) -> Id(v)
 
 	toc: VarRef(name) -> Id(name)
+	
+	toc: And(ein, two) -> LAnd(<toc> ein, <toc> two)
+	toc: Or(ein, two) -> LOr(<toc> ein, <toc> two)
 	
 	// For debugging purposes
 	//toc: bla->bla
