@@ -91,7 +91,7 @@ rules // Main editor interface (defined by editor/Ardlang-Builders and -Referenc
 
 	// Compiles and sends the code
 	compile:
-		(selected, position, ast, path, project-path) -> (ast)
+		(selected, position, ast, path, project-path) -> (filename, result)
 		where (
 			<guarantee-extension(|"c")> path => filename ;
 			<pretty-all> <toc-all> <eval-all> <typeanalysis-all> <map-all> <rename-all> <desugar-all> selected => result;
@@ -104,6 +104,7 @@ rules // Main editor interface (defined by editor/Ardlang-Builders and -Referenc
 			<debug> buildfile;
 			<call> ("python", [buildfile]) => returnvalue;
 			<debug> returnvalue
+//			None() => result
 		)
 
 	// Compiles and sends the code

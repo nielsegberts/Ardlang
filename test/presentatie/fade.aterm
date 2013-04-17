@@ -1,0 +1,55 @@
+Program(
+  []
+, Pinconfigurations(
+    []
+  , [ PinDef(
+        "\n\t"
+      , Mode("output")
+      , PinName("ledPin")
+      , "11"
+      , ["\n", "\n"]
+      )
+    ]
+  )
+, Aliases()
+, Externals()
+, Globals()
+, Codes(
+    [ Code(
+        Repeat()
+      , [ Emptyline("\n\t ")
+        , Line(
+            "\n\t"
+          , For("fadeValue", PWM(Int("0")), PWM(Int("100")))
+          )
+        , Emptyline("\n    \t")
+        , Line(
+            "\n\t\t"
+          , FuncCall("set", [FuncCallNoArgs("ledPin"), FuncCallNoArgs("fadeValue")])
+          )
+        , Emptyline("\n    \t")
+        , Line("\n\t\t", FuncCall("wait", [Time("500ms")]))
+        , Emptyline("\n")
+        , Emptyline("\n  ")
+        , Line(
+            "\n\t"
+          , For(
+              "fadeValue"
+            , PWM(Int("100"))
+            , PWM(Int("0"))
+            , Int("-1")
+            )
+          )
+        , Emptyline("\n\t    ")
+        , Line(
+            "\n\t\t"
+          , FuncCall("set", [FuncCallNoArgs("ledPin"), FuncCallNoArgs("fadeValue")])
+          )
+        , Emptyline("\n\t    ")
+        , Line("\n\t\t", FuncCall("wait", [Time("500ms")]))
+        , Emptyline("\n")
+        ]
+      )
+    ]
+  )
+)

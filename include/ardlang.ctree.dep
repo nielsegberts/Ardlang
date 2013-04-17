@@ -1,0 +1,24 @@
+/home/niels/Ardlang/include/ardlang.ctree: \
+	/home/niels/Ardlang/trans/editor/complete.str \
+	/home/niels/Ardlang/trans/editor/hover.str \
+	/home/niels/Ardlang/trans/editor/resolve.str \
+	/home/niels/Ardlang/trans/analysis/typeanalysis.str \
+	/home/niels/Ardlang/trans/ardlang.str \
+	/home/niels/Ardlang/trans/generation/pretty.str \
+	/home/niels/Ardlang/include/C.str \
+	/home/niels/Ardlang/trans/generation/csignature.str \
+	/home/niels/Ardlang/trans/generation/generate.str \
+	/home/niels/Ardlang/trans/phases/eval.str \
+	/home/niels/Ardlang/trans/phases/map.str \
+	/home/niels/Ardlang/trans/phases/rename.str \
+	/home/niels/Ardlang/trans/phases/desugar.str \
+	/home/niels/Ardlang/trans/analysis/check-indentation.str \
+	/home/niels/Ardlang/trans/project.str \
+	/home/niels/Ardlang/trans/namespacelib.str \
+	/home/niels/Ardlang/trans/namespaces.str \
+	/home/niels/Ardlang/trans/types.str \
+	/home/niels/Ardlang/trans/signatures.str \
+	/home/niels/Ardlang/trans/analysis/check.str \
+	 \
+	/home/niels/Ardlang/lib/editor-common.generated.str \
+	/home/niels/Ardlang/include/Ardlang.str

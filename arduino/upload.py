@@ -17,7 +17,7 @@ time.sleep(0.5)
 ser.setDTR(0)
 ser.close()
 
-step = ['arduino-0022/hardware/tools/avrdude','-Carduino-0022/hardware/tools/avrdude.conf','-v','-v','-v','-v','-patmega168','-cstk500v1','-P/dev/ttyUSB0','-b19200','-D','-Uflash:w:Main.cpp.hex:i'] 
+step = ['arduino-1.0/hardware/tools/avrdude','-Carduino-1.0/hardware/tools/avrdude.conf','-v','-v','-v','-v','-patmega168','-cstk500v1','-P/dev/ttyUSB0','-b19200','-F','-D','-Uflash:w:Main.cpp.hex:i'] 
 
 retcode = subprocess.call(step)
 

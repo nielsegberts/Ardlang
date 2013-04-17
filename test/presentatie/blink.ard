@@ -1,10 +1,9 @@
 pin configuration:
-	output pin1 11
+	output pin1 13
 
 repeat:
-	set pin1 high
-	wait 30ms
-	
+	set pin1 50%
+	wait 100ms
+
 	set pin1 low
 	wait 40ms
-
