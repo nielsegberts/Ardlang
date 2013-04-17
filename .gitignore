@@ -21,3 +21,6 @@ utils
 lib/*.generated.str
 lib-refactoring/*.generated.str
 *~
+arduino-1.0/
+arduino/arduino-1.0/
+
